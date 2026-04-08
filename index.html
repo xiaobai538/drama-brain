@@ -1,373 +1,320 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>编剧第二大脑 v2 · 可爱二次元版</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>编剧第二大脑 · 稳定版</title>
   <style>
-    :root{
-      --bg-a:#fff8fc;
-      --bg-b:#f5f4ff;
-      --card:#ffffffd8;
-      --card-strong:#fff;
-      --line:#eeddf8;
-      --text:#5f5177;
-      --sub:#8f80a5;
-      --pink:#ff96c8;
-      --pink2:#ffc1df;
-      --purple:#ab93ff;
-      --purple2:#d4c7ff;
-      --blue:#9fd3ff;
-      --mint:#96ebd0;
-      --yellow:#ffd76f;
-      --red:#ff8cac;
-      --green:#71d99f;
-      --shadow:0 10px 28px rgba(189,160,226,.18);
-    }
-    *{box-sizing:border-box}
     body{
       margin:0;
-      color:var(--text);
-      font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
-      background:
-        radial-gradient(circle at 0% 0%, #ffe5f0 0, transparent 28%),
-        radial-gradient(circle at 100% 0%, #e8e4ff 0, transparent 25%),
-        linear-gradient(180deg, var(--bg-a), var(--bg-b));
-      min-height:100vh;
+      font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+      background:linear-gradient(180deg,#fff7fb,#f5f5ff);
+      color:#5d4b75;
     }
     .topbar{
-      position:sticky;top:0;z-index:30;
-      backdrop-filter:blur(14px);
-      background:rgba(255,255,255,.68);
-      border-bottom:1px solid #f3e7fb;
-    }
-    .topbar-inner{
-      max-width:1380px;margin:0 auto;padding:14px 16px;
-      display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+      position:sticky;
+      top:0;
+      background:rgba(255,255,255,0.95);
+      border-bottom:1px solid #f0dff8;
+      padding:14px 16px;
+      z-index:99;
     }
     .brand{
-      display:flex;align-items:center;gap:12px;
-      font-size:22px;font-weight:900;color:#7c67ca;
+      font-size:22px;
+      font-weight:700;
+      color:#7e66cb;
+      margin-bottom:10px;
     }
-    .brand-icon{
-      width:42px;height:42px;border-radius:16px;
-      display:flex;align-items:center;justify-content:center;
-      background:linear-gradient(135deg,#ffabd5,#b5a5ff);
-      color:#fff;box-shadow:var(--shadow);font-size:22px;
+    .tabs{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
     }
-    .tabs{display:flex;gap:8px;flex-wrap:wrap}
-    .tab{
-      border:none;cursor:pointer;
-      padding:10px 16px;border-radius:999px;
-      background:#fff;border:1px solid #eedff8;color:#8776a3;
-      font-weight:800;box-shadow:0 6px 14px rgba(186,166,224,.12);
-      transition:.18s ease;
+    .tab-btn{
+      border:none;
+      border-radius:999px;
+      padding:10px 16px;
+      background:#fff;
+      border:1px solid #ecdff8;
+      color:#7d6aa0;
+      cursor:pointer;
+      font-weight:700;
     }
-    .tab:hover{transform:translateY(-1px)}
-    .tab.active{
-      background:linear-gradient(135deg,#ff9acb,#aa95ff);
-      color:#fff;border-color:transparent;
+    .tab-btn.active{
+      background:linear-gradient(135deg,#ff9fcd,#ab99ff);
+      color:#fff;
+      border-color:transparent;
     }
 
-    .wrap{max-width:1380px;margin:0 auto;padding:20px 16px 42px}
-    .page{display:none}
-    .page.active{display:block}
-
-    .grid{display:grid;gap:16px}
-    .grid-2{grid-template-columns:1.1fr .9fr}
-    .grid-3{grid-template-columns:repeat(3,1fr)}
-    @media (max-width:980px){
-      .grid-2,.grid-3{grid-template-columns:1fr}
+    .wrap{
+      max-width:1200px;
+      margin:0 auto;
+      padding:20px 14px 40px;
     }
+
+    .page{display:none;}
+    .page.active{display:block;}
 
     .card{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:26px;
-      box-shadow:var(--shadow);
-      padding:18px;
+      background:#fff;
+      border:1px solid #f0e3fa;
+      border-radius:20px;
+      padding:16px;
+      margin-bottom:16px;
+      box-shadow:0 8px 24px rgba(183,156,224,0.12);
     }
-    .section-title{
-      display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
-      margin-bottom:14px;
+
+    h2{
+      margin:0 0 12px 0;
+      font-size:20px;
+      color:#7b62ca;
     }
-    .section-title h2{
-      margin:0;font-size:20px;color:#7a63c9;
-    }
-    .sub{font-size:12px;color:var(--sub)}
 
     .btn{
-      border:none;cursor:pointer;
-      padding:10px 16px;border-radius:14px;
-      font-weight:800;transition:.18s ease;
-      box-shadow:0 6px 14px rgba(188,169,226,.16);
+      border:none;
+      border-radius:12px;
+      padding:10px 14px;
+      cursor:pointer;
+      font-weight:700;
+      margin-right:8px;
+      margin-bottom:8px;
     }
-    .btn:hover{transform:translateY(-1px)}
-    .btn-primary{background:linear-gradient(135deg,#ff9fcd,#ae9aff);color:#fff}
-    .btn-soft{background:#fff;border:1px solid #ecdff7;color:#876fa8}
-    .btn-ok{background:linear-gradient(135deg,#92e8c9,#82d5ff);color:#fff}
-    .btn-warn{background:linear-gradient(135deg,#ffd97f,#ffb96d);color:#fff}
-    .btn-danger{background:linear-gradient(135deg,#ffa0bb,#ff7bc3);color:#fff}
-    .btn-mini{padding:7px 11px;border-radius:12px;font-size:12px}
+    .btn-primary{
+      background:linear-gradient(135deg,#ff9cc8,#ab95ff);
+      color:#fff;
+    }
+    .btn-soft{
+      background:#fff;
+      border:1px solid #eadcf6;
+      color:#836fa3;
+    }
+    .btn-green{
+      background:linear-gradient(135deg,#8be3c1,#7ecfff);
+      color:#fff;
+    }
+    .btn-yellow{
+      background:linear-gradient(135deg,#ffd57e,#ffb868);
+      color:#fff;
+    }
+    .btn-red{
+      background:linear-gradient(135deg,#ffa6ba,#ff7ebf);
+      color:#fff;
+    }
 
-    .label{font-size:13px;color:var(--sub);margin-bottom:6px;font-weight:800}
     .input,.select,.textarea{
-      width:100%;border:1px solid #ebdcf8;border-radius:16px;
-      background:#fff;padding:12px 14px;color:var(--text);outline:none;
+      width:100%;
+      padding:12px;
+      border:1px solid #eadcf6;
+      border-radius:14px;
+      background:#fff;
+      box-sizing:border-box;
+      color:#5d4b75;
+      margin-top:6px;
     }
-    .input:focus,.select:focus,.textarea:focus{border-color:#c6b2ff}
-    .textarea{min-height:110px;resize:vertical}
-    .form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-    .form-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    @media (max-width:860px){
-      .form-grid,.form-grid-3{grid-template-columns:1fr}
+    .textarea{
+      min-height:100px;
+      resize:vertical;
     }
 
-    .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-    @media (max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}}
+    .label{
+      font-size:13px;
+      color:#8d7ca6;
+      margin-top:10px;
+      font-weight:700;
+    }
+
+    .grid-2{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+    }
+    .grid-3{
+      display:grid;
+      grid-template-columns:1fr 1fr 1fr;
+      gap:16px;
+    }
+    @media (max-width:900px){
+      .grid-2,.grid-3{grid-template-columns:1fr;}
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;
+      margin-bottom:16px;
+    }
+    @media (max-width:900px){
+      .stats{grid-template-columns:repeat(2,1fr);}
+    }
     .stat{
-      background:linear-gradient(180deg,#fff,#fff8fd);
-      border:1px solid #f1e5fb;border-radius:22px;padding:15px;
+      background:#fff;
+      border:1px solid #f0e2fa;
+      border-radius:18px;
+      padding:16px;
+      text-align:center;
     }
-    .stat .n{font-size:29px;font-weight:900;color:#7b64cb}
-    .stat .t{font-size:12px;color:var(--sub)}
-
-    .upload{
-      border:2px dashed #ead8fa;border-radius:22px;
-      padding:24px;text-align:center;background:linear-gradient(180deg,#fff,#fff8fc);
+    .stat-num{
+      font-size:28px;
+      font-weight:800;
+      color:#7961ca;
     }
-    .upload-big{font-size:44px}
-    .preview{
-      max-width:100%;display:none;margin-top:14px;border-radius:18px;border:1px solid #f0e4fa;
+    .stat-label{
+      font-size:13px;
+      color:#907ea8;
+      margin-top:6px;
     }
-
-    .todo-list,.result-list,.formula-list,.material-list,.formula-picker-list{display:flex;flex-direction:column;gap:10px}
 
     .item{
-      background:var(--card-strong);
-      border:1px solid #f0e5fb;
-      border-radius:20px;padding:14px;
+      border:1px solid #f0e3fa;
+      background:#fff;
+      border-radius:16px;
+      padding:12px;
+      margin-bottom:10px;
     }
-    .item-head{
-      display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;
+    .item-title{
+      font-size:16px;
+      font-weight:700;
+      color:#6e58bf;
+      margin-bottom:6px;
     }
-    .name{font-size:16px;font-weight:900;color:#6d58bb}
-    .meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+    .meta{
+      font-size:12px;
+      color:#9382ab;
+      margin-bottom:8px;
+    }
+
     .pill{
-      display:inline-flex;align-items:center;gap:5px;
-      padding:5px 9px;border-radius:999px;
-      background:#faf4ff;border:1px solid #efe0fb;
-      color:#8b78a8;font-size:12px;font-weight:800;
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:12px;
+      background:#f8f2ff;
+      color:#856dd0;
+      margin-right:6px;
+      margin-bottom:6px;
     }
-    .pill-status-待看{background:#eff6ff;color:#5f8dda}
-    .pill-status-已看{background:#eefcf4;color:#4da56f}
-    .pill-status-待拆解{background:#fff8e7;color:#d69a2d}
-    .pill-status-已拆解{background:#f2efff;color:#7f68d3}
-    .pill-status-跳过{background:#f5f5f7;color:#8e8d96}
 
-    .row{display:flex;gap:8px;flex-wrap:wrap}
-    .helper{font-size:12px;line-height:1.7;color:var(--sub)}
-    .empty{text-align:center;padding:26px 12px;color:var(--sub)}
+    .status-待看{background:#eef5ff;color:#5c88d6;}
+    .status-已看{background:#eefcf4;color:#4ca06e;}
+    .status-待拆解{background:#fff8e8;color:#cf9729;}
+    .status-已拆解{background:#f2efff;color:#7b65d1;}
+    .status-跳过{background:#f4f4f4;color:#8e8e96;}
 
-    .result-item{
-      display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-      background:#fff;border:1px solid #f0e5fb;border-radius:18px;padding:12px;
+    table{
+      width:100%;
+      border-collapse:collapse;
+      background:#fff;
     }
-    .result-item input[type="text"]{
-      flex:1;min-width:160px;border:1px solid #eadcf6;border-radius:12px;padding:10px 12px;
-    }
-    .dup{opacity:.55}
-
-    .table-wrap{
-      overflow:auto;background:#fff;border:1px solid #f0e5fb;border-radius:20px;
-    }
-    table{width:100%;border-collapse:collapse}
     th,td{
-      border-bottom:1px solid #f3e8fb;padding:12px 10px;text-align:left;font-size:13px;vertical-align:top;
+      border-bottom:1px solid #f3e8fb;
+      padding:10px;
+      text-align:left;
+      vertical-align:top;
+      font-size:13px;
     }
-    th{background:#fff7fd;color:#866fb0}
+    th{
+      background:#fff8fd;
+      color:#856eae;
+    }
+    .table-wrap{
+      overflow:auto;
+      border:1px solid #f0e3fa;
+      border-radius:16px;
+    }
 
     .toast-wrap{
-      position:fixed;right:16px;top:82px;z-index:90;display:flex;flex-direction:column;gap:8px;
+      position:fixed;
+      top:20px;
+      right:20px;
+      z-index:999;
     }
     .toast{
-      background:#fff;border:1px solid #f0e3fb;color:#775fa6;
-      border-radius:16px;padding:12px 14px;box-shadow:var(--shadow);
-      min-width:220px;max-width:320px;
-      animation:toastIn .18s ease;
-    }
-    @keyframes toastIn{
-      from{opacity:0;transform:translateY(-6px)}
-      to{opacity:1;transform:translateY(0)}
-    }
-
-    .modal{
-      position:fixed;inset:0;background:rgba(88,68,130,.24);
-      display:none;align-items:center;justify-content:center;z-index:70;padding:16px;
-    }
-    .modal.show{display:flex}
-    .modal-panel{
-      width:min(820px,100%);
-      max-height:92vh;overflow:auto;
-      background:#fff;border:1px solid #efdefa;border-radius:28px;padding:18px;
-      box-shadow:var(--shadow);
+      background:#fff;
+      border:1px solid #efdff8;
+      border-radius:14px;
+      padding:12px 14px;
+      margin-bottom:8px;
+      box-shadow:0 8px 24px rgba(183,156,224,0.18);
+      color:#745ea5;
+      min-width:220px;
     }
 
-    .tag-chip{
-      display:inline-block;padding:4px 10px;border-radius:999px;
-      background:#f6efff;color:#8068d2;font-size:12px;font-weight:800;
-      margin-right:6px;margin-bottom:6px;
-    }
-
-    .formula-ref{
-      background:#fff9fd;border:1px dashed #eedcf8;border-radius:16px;padding:10px;margin-top:10px;
-    }
-
-    .star{
-      color:#ff9bc4;
-    }
+    .hidden{display:none;}
   </style>
 </head>
 <body>
   <div class="topbar">
-    <div class="topbar-inner">
-      <div class="brand">
-        <div class="brand-icon">🎀</div>
-        <div>编剧第二大脑 v2</div>
-      </div>
-      <div class="tabs">
-        <button class="tab active" data-page="today">今日待看</button>
-        <button class="tab" data-page="import">刷榜单</button>
-        <button class="tab" data-page="library">剧库</button>
-        <button class="tab" data-page="formula">公式书</button>
-        <button class="tab" data-page="material">素材库</button>
-        <button class="tab" data-page="settings">设置</button>
-      </div>
+    <div class="brand">🎀 编剧第二大脑</div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showPage('today', this)">今日待看</button>
+      <button class="tab-btn" onclick="showPage('import', this)">刷榜单</button>
+      <button class="tab-btn" onclick="showPage('library', this)">剧库</button>
+      <button class="tab-btn" onclick="showPage('formula', this)">公式书</button>
+      <button class="tab-btn" onclick="showPage('material', this)">素材库</button>
+      <button class="tab-btn" onclick="showPage('settings', this)">设置</button>
     </div>
   </div>
 
   <div class="toast-wrap" id="toastWrap"></div>
 
   <div class="wrap">
+
     <!-- 今日待看 -->
-    <section class="page active" id="page-today">
+    <div id="page-today" class="page active">
       <div class="stats" id="statsBox"></div>
-
-      <div class="grid grid-2" style="margin-top:16px;">
-        <div class="card">
-          <div class="section-title">
-            <h2>🌸 今日要看的榜单剧</h2>
-            <button class="btn btn-soft" id="btnRefreshToday">刷新</button>
-          </div>
-          <div class="todo-list" id="todayList"></div>
-        </div>
-
-        <div class="card">
-          <div class="section-title">
-            <h2>💡 快速灵感记录</h2>
-          </div>
-          <div class="label">想到什么就记什么</div>
-          <textarea class="textarea" id="quickIdeaText" placeholder="比如：女主明明是来退婚的，却被所有人误以为是来高攀男主……"></textarea>
-          <div class="form-grid" style="margin-top:12px;">
-            <div>
-              <div class="label">素材类型</div>
-              <select class="select" id="quickIdeaType">
-                <option>灵感</option>
-                <option>人设</option>
-                <option>事件</option>
-                <option>对白</option>
-                <option>场景</option>
-              </select>
-            </div>
-            <div>
-              <div class="label">适用题材</div>
-              <input class="input" id="quickIdeaGenre" placeholder="如：甜宠 / 战神 / 重生" />
-            </div>
-          </div>
-          <div style="margin-top:12px;">
-            <button class="btn btn-primary" id="btnQuickIdea">保存到素材库</button>
-          </div>
-        </div>
+      <div class="card">
+        <h2>🌸 今日待看清单</h2>
+        <div id="todayList"></div>
       </div>
-    </section>
+    </div>
 
     <!-- 刷榜单 -->
-    <section class="page" id="page-import">
-      <div class="grid grid-2">
+    <div id="page-import" class="page">
+      <div class="grid-2">
         <div class="card">
-          <div class="section-title">
-            <h2>📸 榜单截图识别</h2>
+          <h2>📸 上传榜单截图</h2>
+          <div class="label">榜单图片</div>
+          <input type="file" id="imageInput" class="input" accept="image/*">
+          <div class="label">来源榜单</div>
+          <select id="sourceBoard" class="select">
+            <option>日榜</option>
+            <option>飙升榜</option>
+            <option>新剧榜</option>
+            <option>完结榜</option>
+            <option>热搜榜</option>
+          </select>
+          <div style="margin-top:14px;">
+            <button class="btn btn-primary" onclick="recognizeImage()">AI识别剧名</button>
+            <button class="btn btn-soft" onclick="clearRecognize()">清空</button>
           </div>
-          <div class="upload">
-            <div class="upload-big">🪄</div>
-            <div><b>上传榜单截图</b> 或 <b>Ctrl+V 直接粘贴截图</b></div>
-            <div class="helper" style="margin-top:6px;">自动识别剧目名 → 自动去重 → 导入待看列表</div>
-            <input class="input" type="file" id="imageInput" accept="image/*" style="margin-top:12px;">
-            <img class="preview" id="previewImage">
-          </div>
-
-          <div class="form-grid" style="margin-top:14px;">
-            <div>
-              <div class="label">来源榜单</div>
-              <select class="select" id="sourceBoard">
-                <option>日榜</option>
-                <option>飙升榜</option>
-                <option>新剧榜</option>
-                <option>完结榜</option>
-                <option>热搜榜</option>
-              </select>
-            </div>
-            <div>
-              <div class="label">识别模式</div>
-              <select class="select" id="recognizeMode">
-                <option value="strict">严格提取剧名</option>
-                <option value="normal">普通提取</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="row" style="margin-top:14px;">
-            <button class="btn btn-primary" id="btnRecognize">✨ AI识别剧名</button>
-            <button class="btn btn-soft" id="btnClearImage">清空图片</button>
-          </div>
+          <div class="label">预览</div>
+          <img id="previewImage" style="max-width:100%;border-radius:14px;display:none;border:1px solid #f0e3fa;">
         </div>
 
         <div class="card">
-          <div class="section-title">
-            <h2>🧁 识别结果</h2>
-            <div class="row">
-              <button class="btn btn-soft btn-mini" id="btnSelectAll">全选</button>
-              <button class="btn btn-soft btn-mini" id="btnUnselectAll">取消</button>
-            </div>
+          <h2>🧁 识别结果</h2>
+          <div style="margin-bottom:10px;">
+            <button class="btn btn-soft" onclick="selectRecognized(true)">全选</button>
+            <button class="btn btn-soft" onclick="selectRecognized(false)">取消全选</button>
+            <button class="btn btn-green" onclick="importRecognized()">导入选中剧目</button>
           </div>
-          <div class="helper">灰色表示已在剧库中存在，不会重复导入。</div>
-          <div class="result-list" id="resultList" style="margin-top:12px;"></div>
-          <div class="row" style="margin-top:14px;">
-            <button class="btn btn-ok" id="btnImportSelected">导入选中剧目</button>
-          </div>
+          <div id="recognizedList"></div>
         </div>
       </div>
-    </section>
+    </div>
 
     <!-- 剧库 -->
-    <section class="page" id="page-library">
+    <div id="page-library" class="page">
       <div class="card">
-        <div class="section-title">
-          <h2>🎬 剧库总表</h2>
-          <div class="row">
-            <button class="btn btn-soft btn-mini" id="btnExportCSV">导出CSV</button>
-            <button class="btn btn-soft btn-mini" id="btnExportAll">导出JSON</button>
-          </div>
-        </div>
-
-        <div class="form-grid-3">
+        <h2>🎬 剧库总表</h2>
+        <div class="grid-3">
           <div>
-            <div class="label">搜索剧名 / 备注</div>
-            <input class="input" id="searchDrama" placeholder="搜剧名、备注关键词" />
+            <div class="label">搜索</div>
+            <input id="searchDrama" class="input" placeholder="搜索剧名/备注" oninput="renderDramaTable()">
           </div>
           <div>
             <div class="label">状态筛选</div>
-            <select class="select" id="filterStatus">
+            <select id="filterDramaStatus" class="select" onchange="renderDramaTable()">
               <option value="">全部</option>
               <option>待看</option>
               <option>已看</option>
@@ -378,7 +325,7 @@
           </div>
           <div>
             <div class="label">题材筛选</div>
-            <select class="select" id="filterGenre">
+            <select id="filterDramaGenre" class="select" onchange="renderDramaTable()">
               <option value="">全部</option>
               <option>甜宠</option>
               <option>战神</option>
@@ -392,8 +339,11 @@
             </select>
           </div>
         </div>
-
-        <div class="table-wrap" style="margin-top:16px;">
+        <div style="margin-top:14px;">
+          <button class="btn btn-soft" onclick="exportCSV()">导出CSV</button>
+          <button class="btn btn-soft" onclick="exportJSON()">导出JSON</button>
+        </div>
+        <div class="table-wrap" style="margin-top:14px;">
           <table>
             <thead>
               <tr>
@@ -403,247 +353,27 @@
                 <th>状态</th>
                 <th>评分</th>
                 <th>备注</th>
-                <th>日期</th>
                 <th>操作</th>
               </tr>
             </thead>
             <tbody id="dramaTableBody"></tbody>
           </table>
         </div>
-        <div class="empty" id="dramaEmpty" style="display:none;">还没有剧目，先去刷榜单导入吧 ✨</div>
       </div>
-    </section>
+    </div>
 
     <!-- 公式书 -->
-    <section class="page" id="page-formula">
-      <div class="grid grid-2">
+    <div id="page-formula" class="page">
+      <div class="grid-2">
         <div class="card">
-          <div class="section-title">
-            <h2>📘 公式书编辑区</h2>
-            <button class="btn btn-soft btn-mini" id="btnResetFormula">清空</button>
-          </div>
-
+          <h2>📘 新建 / 编辑公式</h2>
           <input type="hidden" id="formulaId">
 
-          <div class="form-grid">
-            <div>
-              <div class="label">公式名称</div>
-              <input class="input" id="formulaTitle" placeholder="如：战神归来公式 / 闪婚甜宠公式">
-            </div>
-            <div>
-              <div class="label">题材类型</div>
-              <select class="select" id="formulaGenre">
-                <option>甜宠</option>
-                <option>战神</option>
-                <option>重生</option>
-                <option>逆袭</option>
-                <option>虐恋</option>
-                <option>悬疑</option>
-                <option>古装</option>
-                <option>都市</option>
-                <option>其他</option>
-              </select>
-            </div>
-          </div>
+          <div class="label">公式名称</div>
+          <input id="formulaTitle" class="input" placeholder="如：战神归来公式">
 
-          <div style="margin-top:12px;">
-            <div class="label">人设公式</div>
-            <textarea class="textarea" id="formulaCharacter" placeholder="男主/女主/反派的人设模板、身份反差、欲望与弱点……"></textarea>
-          </div>
-
-          <div style="margin-top:12px;">
-            <div class="label">框架公式</div>
-            <textarea class="textarea" id="formulaFramework" placeholder="开篇钩子、爽点推进、中段反转、高潮回收……"></textarea>
-          </div>
-
-          <div style="margin-top:12px;">
-            <div class="label">高频事件</div>
-            <textarea class="textarea" id="formulaEvent" placeholder="打脸、掉马、认亲、误会、复仇、逆袭、身份揭示……"></textarea>
-          </div>
-
-          <div style="margin-top:12px;">
-            <div class="label">仿写思路</div>
-            <textarea class="textarea" id="formulaRewrite" placeholder="如果套这套公式写新剧，怎么换壳？怎么差异化？"></textarea>
-          </div>
-
-          <div style="margin-top:12px;">
-            <div class="label">避坑备注</div>
-            <textarea class="textarea" id="formulaNote" placeholder="哪些桥段会老套、哪些节奏会拖、哪些地方必须提前埋线……"></textarea>
-          </div>
-
-          <div style="margin-top:12px;">
-            <div class="label">参考剧目（自动联动）</div>
-            <div class="formula-ref" id="formulaRefBox">还没添加参考剧目</div>
-          </div>
-
-          <div class="row" style="margin-top:14px;">
-            <button class="btn btn-primary" id="btnSaveFormula">保存公式</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="section-title">
-            <h2>🌷 公式书列表</h2>
-          </div>
-
-          <div class="form-grid">
-            <div>
-              <div class="label">搜索公式</div>
-              <input class="input" id="searchFormula" placeholder="搜索公式名称">
-            </div>
-            <div>
-              <div class="label">题材筛选</div>
-              <select class="select" id="filterFormulaGenre">
-                <option value="">全部</option>
-                <option>甜宠</option>
-                <option>战神</option>
-                <option>重生</option>
-                <option>逆袭</option>
-                <option>虐恋</option>
-                <option>悬疑</option>
-                <option>古装</option>
-                <option>都市</option>
-                <option>其他</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="formula-list" id="formulaList" style="margin-top:14px;"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 素材库 -->
-    <section class="page" id="page-material">
-      <div class="grid grid-2">
-        <div class="card">
-          <div class="section-title">
-            <h2>💖 新增素材</h2>
-            <button class="btn btn-soft btn-mini" id="btnResetMaterial">清空</button>
-          </div>
-          <input type="hidden" id="materialId">
-
-          <div>
-            <div class="label">素材内容</div>
-            <textarea class="textarea" id="materialContent" placeholder="灵感、人设、事件、对白、场景都可以记在这里"></textarea>
-          </div>
-
-          <div class="form-grid" style="margin-top:12px;">
-            <div>
-              <div class="label">素材类型</div>
-              <select class="select" id="materialType">
-                <option>灵感</option>
-                <option>人设</option>
-                <option>事件</option>
-                <option>对白</option>
-                <option>场景</option>
-              </select>
-            </div>
-            <div>
-              <div class="label">适用题材</div>
-              <input class="input" id="materialGenre" placeholder="如：甜宠 / 重生">
-            </div>
-          </div>
-
-          <div class="form-grid" style="margin-top:12px;">
-            <div>
-              <div class="label">标签</div>
-              <input class="input" id="materialTags" placeholder="掉马、打脸、误会、白月光……">
-            </div>
-            <div>
-              <div class="label">来源</div>
-              <input class="input" id="materialSource" placeholder="哪部剧 / 自己想到的">
-            </div>
-          </div>
-
-          <div class="row" style="margin-top:14px;">
-            <button class="btn btn-primary" id="btnSaveMaterial">保存素材</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="section-title">
-            <h2>🧸 素材库列表</h2>
-          </div>
-
-          <div class="form-grid">
-            <div>
-              <div class="label">搜索素材</div>
-              <input class="input" id="searchMaterial" placeholder="搜内容、标签、来源">
-            </div>
-            <div>
-              <div class="label">类型筛选</div>
-              <select class="select" id="filterMaterialType">
-                <option value="">全部</option>
-                <option>灵感</option>
-                <option>人设</option>
-                <option>事件</option>
-                <option>对白</option>
-                <option>场景</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="material-list" id="materialList" style="margin-top:14px;"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 设置 -->
-    <section class="page" id="page-settings">
-      <div class="grid grid-2">
-        <div class="card">
-          <div class="section-title">
-            <h2>🔑 AI 设置</h2>
-          </div>
-          <div class="label">通义千问 API Key</div>
-          <input class="input" id="apiKeyInput" placeholder="sk-xxxxxxxx">
-          <div class="helper" style="margin-top:10px;">
-            只保存在你的浏览器本地，不会上传到其他数据库。<br>
-            申请路径：DashScope 控制台 → API-KEY 管理。
-          </div>
-          <div style="margin-top:14px;">
-            <button class="btn btn-primary" id="btnSaveApiKey">保存 Key</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="section-title">
-            <h2>📦 数据管理</h2>
-          </div>
-          <div class="row">
-            <button class="btn btn-soft" id="btnImportJson">导入JSON</button>
-            <button class="btn btn-soft" id="btnExportJson">导出JSON</button>
-            <button class="btn btn-danger" id="btnClearAll">清空全部</button>
-          </div>
-          <input type="file" id="jsonFileInput" accept=".json" style="display:none">
-          <div class="helper" style="margin-top:12px;">
-            当前版本为纯前端本地数据库。建议每周导出一次 JSON 备份。
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
-
-  <!-- 编辑剧目弹窗 -->
-  <div class="modal" id="dramaModal">
-    <div class="modal-panel">
-      <div class="section-title">
-        <h2>🎬 编辑剧目</h2>
-        <button class="btn btn-soft btn-mini" id="btnCloseDramaModal">关闭</button>
-      </div>
-
-      <input type="hidden" id="editDramaId">
-
-      <div class="form-grid">
-        <div>
-          <div class="label">剧名</div>
-          <input class="input" id="editDramaName">
-        </div>
-        <div>
-          <div class="label">题材</div>
-          <select class="select" id="editDramaGenre">
-            <option value="">未分类</option>
+          <div class="label">题材类型</div>
+          <select id="formulaGenre" class="select">
             <option>甜宠</option>
             <option>战神</option>
             <option>重生</option>
@@ -654,514 +384,627 @@
             <option>都市</option>
             <option>其他</option>
           </select>
-        </div>
-      </div>
 
-      <div class="form-grid" style="margin-top:12px;">
-        <div>
-          <div class="label">状态</div>
-          <select class="select" id="editDramaStatus">
-            <option>待看</option>
-            <option>已看</option>
-            <option>待拆解</option>
-            <option>已拆解</option>
-            <option>跳过</option>
-          </select>
-        </div>
-        <div>
-          <div class="label">评分</div>
-          <select class="select" id="editDramaRating">
-            <option value="">未评分</option>
-            <option>⭐</option>
-            <option>⭐⭐</option>
-            <option>⭐⭐⭐</option>
-            <option>⭐⭐⭐⭐</option>
-            <option>⭐⭐⭐⭐⭐</option>
-          </select>
-        </div>
-      </div>
+          <div class="label">人设公式</div>
+          <textarea id="formulaCharacter" class="textarea" placeholder="男主/女主/反派的人设结构"></textarea>
 
-      <div class="form-grid" style="margin-top:12px;">
-        <div>
-          <div class="label">是否拆解</div>
-          <select class="select" id="editDramaAnalyze">
-            <option>否</option>
-            <option>是</option>
-          </select>
-        </div>
-        <div>
-          <div class="label">红果链接</div>
-          <input class="input" id="editDramaLink" placeholder="可选">
-        </div>
-      </div>
+          <div class="label">框架公式</div>
+          <textarea id="formulaFramework" class="textarea" placeholder="开篇钩子、推进结构、高潮模式"></textarea>
 
-      <div style="margin-top:12px;">
-        <div class="label">备注</div>
-        <textarea class="textarea" id="editDramaNote" placeholder="亮点、槽点、可仿写点、节奏问题、人设判断……"></textarea>
-      </div>
+          <div class="label">高频事件</div>
+          <textarea id="formulaEvent" class="textarea" placeholder="打脸、掉马、认亲、身份揭示……"></textarea>
 
-      <div class="row" style="margin-top:14px;">
-        <button class="btn btn-primary" id="btnSaveDramaEdit">保存</button>
+          <div class="label">仿写思路</div>
+          <textarea id="formulaRewrite" class="textarea" placeholder="如何复制这套公式写新剧"></textarea>
+
+          <div class="label">避坑备注</div>
+          <textarea id="formulaNote" class="textarea" placeholder="哪些地方容易俗、拖、弱"></textarea>
+
+          <div class="label">参考剧目</div>
+          <div id="formulaRefsBox" class="item">还没有参考剧目</div>
+
+          <div style="margin-top:14px;">
+            <button class="btn btn-primary" onclick="saveFormula()">保存公式</button>
+            <button class="btn btn-soft" onclick="resetFormulaForm()">清空</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>🌷 公式书列表</h2>
+          <div class="grid-2">
+            <div>
+              <div class="label">搜索</div>
+              <input id="searchFormula" class="input" oninput="renderFormulaList()" placeholder="搜索公式名">
+            </div>
+            <div>
+              <div class="label">题材筛选</div>
+              <select id="filterFormulaGenre" class="select" onchange="renderFormulaList()">
+                <option value="">全部</option>
+                <option>甜宠</option>
+                <option>战神</option>
+                <option>重生</option>
+                <option>逆袭</option>
+                <option>虐恋</option>
+                <option>悬疑</option>
+                <option>古装</option>
+                <option>都市</option>
+                <option>其他</option>
+              </select>
+            </div>
+          </div>
+          <div id="formulaList" style="margin-top:14px;"></div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- 加入公式书弹窗 -->
-  <div class="modal" id="formulaPickerModal">
-    <div class="modal-panel">
-      <div class="section-title">
-        <h2>📎 加入公式书参考剧</h2>
-        <button class="btn btn-soft btn-mini" id="btnCloseFormulaPicker">关闭</button>
+    <!-- 素材库 -->
+    <div id="page-material" class="page">
+      <div class="grid-2">
+        <div class="card">
+          <h2>💖 新增素材</h2>
+          <input type="hidden" id="materialId">
+
+          <div class="label">素材内容</div>
+          <textarea id="materialContent" class="textarea" placeholder="灵感、人设、事件、对白、场景都可以"></textarea>
+
+          <div class="label">素材类型</div>
+          <select id="materialType" class="select">
+            <option>灵感</option>
+            <option>人设</option>
+            <option>事件</option>
+            <option>对白</option>
+            <option>场景</option>
+          </select>
+
+          <div class="label">适用题材</div>
+          <input id="materialGenre" class="input" placeholder="如：甜宠、重生">
+
+          <div class="label">标签</div>
+          <input id="materialTags" class="input" placeholder="如：打脸、掉马、误会">
+
+          <div class="label">来源</div>
+          <input id="materialSource" class="input" placeholder="哪部剧 / 自己想到的">
+
+          <div style="margin-top:14px;">
+            <button class="btn btn-primary" onclick="saveMaterial()">保存素材</button>
+            <button class="btn btn-soft" onclick="resetMaterialForm()">清空</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>🧸 素材库列表</h2>
+          <div class="grid-2">
+            <div>
+              <div class="label">搜索</div>
+              <input id="searchMaterial" class="input" oninput="renderMaterialList()" placeholder="搜索内容/标签/来源">
+            </div>
+            <div>
+              <div class="label">类型筛选</div>
+              <select id="filterMaterialType" class="select" onchange="renderMaterialList()">
+                <option value="">全部</option>
+                <option>灵感</option>
+                <option>人设</option>
+                <option>事件</option>
+                <option>对白</option>
+                <option>场景</option>
+              </select>
+            </div>
+          </div>
+          <div id="materialList" style="margin-top:14px;"></div>
+        </div>
       </div>
-
-      <input type="hidden" id="pickerDramaId">
-
-      <div class="helper" id="pickerDramaNameBox" style="margin-bottom:14px;"></div>
-
-      <div class="row" style="margin-bottom:12px;">
-        <button class="btn btn-primary btn-mini" id="btnCreateFormulaFromPicker">新建公式后加入</button>
-      </div>
-
-      <div class="formula-picker-list" id="formulaPickerList"></div>
     </div>
+
+    <!-- 设置 -->
+    <div id="page-settings" class="page">
+      <div class="grid-2">
+        <div class="card">
+          <h2>🔑 API 设置</h2>
+          <div class="label">通义千问 API Key</div>
+          <input id="apiKeyInput" class="input" placeholder="sk-xxxx">
+          <div style="margin-top:14px;">
+            <button class="btn btn-primary" onclick="saveApiKey()">保存 Key</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>📦 数据管理</h2>
+          <div>
+            <button class="btn btn-soft" onclick="triggerImportJSON()">导入JSON</button>
+            <button class="btn btn-soft" onclick="exportJSON()">导出JSON</button>
+            <button class="btn btn-red" onclick="clearAllData()">清空全部数据</button>
+            <input type="file" id="jsonImportInput" class="hidden" accept=".json" onchange="handleImportJSON(event)">
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <script>
-    // ===== 存储 =====
-    const store = {
-      get(key, fallback = []) {
-        try {
-          const raw = localStorage.getItem(key);
-          return raw ? JSON.parse(raw) : fallback;
-        } catch(e) {
-          return fallback;
+    var STORAGE_KEYS = {
+      dramas: 'brain_dramas_v_stable',
+      formulas: 'brain_formulas_v_stable',
+      materials: 'brain_materials_v_stable',
+      apiKey: 'brain_api_key_v_stable'
+    };
+
+    var currentRecognized = [];
+    var currentFormulaRefs = [];
+
+    function uid() {
+      return 'id_' + new Date().getTime() + '_' + Math.floor(Math.random() * 100000);
+    }
+
+    function today() {
+      var d = new Date();
+      var y = d.getFullYear();
+      var m = String(d.getMonth() + 1);
+      var day = String(d.getDate());
+      if (m.length < 2) m = '0' + m;
+      if (day.length < 2) day = '0' + day;
+      return y + '-' + m + '-' + day;
+    }
+
+    function toast(msg) {
+      var wrap = document.getElementById('toastWrap');
+      var div = document.createElement('div');
+      div.className = 'toast';
+      div.innerHTML = msg;
+      wrap.appendChild(div);
+      setTimeout(function(){ if(div && div.parentNode) div.parentNode.removeChild(div); }, 2500);
+    }
+
+    function getData(key) {
+      try {
+        var raw = localStorage.getItem(key);
+        if (!raw) return [];
+        return JSON.parse(raw);
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function setData(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function getDramas() { return getData(STORAGE_KEYS.dramas); }
+    function setDramas(v) { setData(STORAGE_KEYS.dramas, v); }
+
+    function getFormulas() { return getData(STORAGE_KEYS.formulas); }
+    function setFormulas(v) { setData(STORAGE_KEYS.formulas, v); }
+
+    function getMaterials() { return getData(STORAGE_KEYS.materials); }
+    function setMaterials(v) { setData(STORAGE_KEYS.materials, v); }
+
+    function getApiKey() { return localStorage.getItem(STORAGE_KEYS.apiKey) || ''; }
+    function setApiKeyValue(v) { localStorage.setItem(STORAGE_KEYS.apiKey, v); }
+
+    function esc(str) {
+      if (str === undefined || str === null) return '';
+      return String(str)
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;');
+    }
+
+    function normalizeDramaName(name) {
+      if (!name) return '';
+      name = String(name);
+      name = name.replace(/^[\d\s\.\、\-—]+/, '');
+      name = name.replace(/^第?\d+名[:：]?\s*/, '');
+      name = name.replace(/^(TOP|Top)\s*\d+\s*/, '');
+      name = name.replace(/\s+/g, ' ');
+      return name.replace(/^\s+|\s+$/g, '');
+    }
+
+    function showPage(pageName, btn) {
+      var pages = document.getElementsByClassName('page');
+      var i;
+      for (i = 0; i < pages.length; i++) {
+        pages[i].className = 'page';
+      }
+      var page = document.getElementById('page-' + pageName);
+      if (page) page.className = 'page active';
+
+      var tabs = document.getElementsByClassName('tab-btn');
+      for (i = 0; i < tabs.length; i++) {
+        tabs[i].className = 'tab-btn';
+      }
+      if (btn) btn.className = 'tab-btn active';
+
+      if (pageName === 'today') renderToday();
+      if (pageName === 'library') renderDramaTable();
+      if (pageName === 'formula') renderFormulaList();
+      if (pageName === 'material') renderMaterialList();
+      if (pageName === 'settings') loadSettings();
+    }
+
+    function renderStats() {
+      var dramas = getDramas();
+      var wait = 0, watched = 0, toAnalyze = 0, analyzed = 0;
+      var i;
+      for (i = 0; i < dramas.length; i++) {
+        if (dramas[i].status === '待看') wait++;
+        if (dramas[i].status === '已看') watched++;
+        if (dramas[i].status === '待拆解') toAnalyze++;
+        if (dramas[i].status === '已拆解') analyzed++;
+      }
+      document.getElementById('statsBox').innerHTML =
+        '<div class="stat"><div class="stat-num">' + dramas.length + '</div><div class="stat-label">剧库总数</div></div>' +
+        '<div class="stat"><div class="stat-num">' + wait + '</div><div class="stat-label">待看</div></div>' +
+        '<div class="stat"><div class="stat-num">' + watched + '</div><div class="stat-label">已看</div></div>' +
+        '<div class="stat"><div class="stat-num">' + toAnalyze + '</div><div class="stat-label">待拆解</div></div>';
+    }
+
+    function renderToday() {
+      renderStats();
+      var dramas = getDramas();
+      var html = '';
+      var i;
+      var count = 0;
+      for (i = 0; i < dramas.length; i++) {
+        if (dramas[i].status === '待看') {
+          count++;
+          html += '<div class="item">';
+          html += '<div class="item-title">' + count + '. ' + esc(dramas[i].name) + '</div>';
+          html += '<div class="meta">' + esc(dramas[i].source || '') + ' · ' + esc(dramas[i].date || '') + '</div>';
+          html += '<button class="btn btn-green" onclick="markWatched(\'' + dramas[i].id + '\')">看完</button>';
+          html += '<button class="btn btn-yellow" onclick="markToAnalyze(\'' + dramas[i].id + '\')">待拆解</button>';
+          html += '<button class="btn btn-soft" onclick="editDrama(\'' + dramas[i].id + '\')">编辑</button>';
+          html += '<button class="btn btn-soft" onclick="skipDrama(\'' + dramas[i].id + '\')">跳过</button>';
+          html += '</div>';
         }
-      },
-      set(key, value) {
-        localStorage.setItem(key, JSON.stringify(value));
-      },
-      remove(key) {
-        localStorage.removeItem(key);
       }
-    };
-
-    const DB = {
-      dramas: 'writer_brain_v2_dramas',
-      formulas: 'writer_brain_v2_formulas',
-      materials: 'writer_brain_v2_materials',
-      apiKey: 'writer_brain_v2_apiKey'
-    };
-
-    const getDramas = () => store.get(DB.dramas, []);
-    const setDramas = v => store.set(DB.dramas, v);
-
-    const getFormulas = () => store.get(DB.formulas, []);
-    const setFormulas = v => store.set(DB.formulas, v);
-
-    const getMaterials = () => store.get(DB.materials, []);
-    const setMaterials = v => store.set(DB.materials, v);
-
-    const getApiKey = () => localStorage.getItem(DB.apiKey) || '';
-    const setApiKey = v => localStorage.setItem(DB.apiKey, v);
-
-    // ===== 工具 =====
-    const uid = () => 'id_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
-    const today = () => {
-      const d = new Date();
-      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    };
-    const esc = (s='') => String(s)
-      .replaceAll('&','&amp;')
-      .replaceAll('<','&lt;')
-      .replaceAll('>','&gt;')
-      .replaceAll('"','&quot;');
-
-    function toast(msg){
-      const wrap = document.getElementById('toastWrap');
-      const el = document.createElement('div');
-      el.className = 'toast';
-      el.textContent = msg;
-      wrap.appendChild(el);
-      setTimeout(()=>el.remove(), 2600);
+      if (!html) html = '<div class="item">今天没有待看的剧啦 ✨</div>';
+      document.getElementById('todayList').innerHTML = html;
     }
 
-    function normalizeDramaName(name=''){
-      return name
-        .replace(/^[\d\s\.\、\-—]+/,'')
-        .replace(/^第?\d+名[:：]?\s*/,'')
-        .replace(/^(TOP|Top)\s*\d+\s*/,'')
-        .replace(/\s+/g,' ')
-        .trim();
-    }
-
-    function splitTags(str=''){
-      return str.split(/[，,、\s]+/).map(v=>v.trim()).filter(Boolean);
-    }
-
-    // ===== 页面切换 =====
-    function activatePage(name){
-      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-
-      document.getElementById('page-' + name)?.classList.add('active');
-      document.querySelector(`.tab[data-page="${name}"]`)?.classList.add('active');
-
-      if(name === 'today') renderToday();
-      if(name === 'library') renderDramaTable();
-      if(name === 'formula') renderFormulaList();
-      if(name === 'material') renderMaterialList();
-      if(name === 'settings') document.getElementById('apiKeyInput').value = getApiKey();
-    }
-
-    // ===== 今日待看 =====
-    function renderToday(){
-      const dramas = getDramas();
-      const waiting = dramas.filter(d=>d.status === '待看');
-      const watched = dramas.filter(d=>d.status === '已看');
-      const toAnalyze = dramas.filter(d=>d.status === '待拆解');
-      const analyzed = dramas.filter(d=>d.status === '已拆解');
-      const skipped = dramas.filter(d=>d.status === '跳过');
-
-      document.getElementById('statsBox').innerHTML = `
-        <div class="stat"><div class="n">${dramas.length}</div><div class="t">剧库总数</div></div>
-        <div class="stat"><div class="n">${waiting.length}</div><div class="t">今日待看</div></div>
-        <div class="stat"><div class="n">${watched.length}</div><div class="t">已看</div></div>
-        <div class="stat"><div class="n">${toAnalyze.length}</div><div class="t">待拆解</div></div>
-        <div class="stat"><div class="n">${analyzed.length}</div><div class="t">已拆解</div></div>
-      `;
-
-      const box = document.getElementById('todayList');
-      if(waiting.length === 0){
-        box.innerHTML = `<div class="empty">今天没有待看的剧了，去刷榜单吧 🎀</div>`;
+    function saveApiKey() {
+      var key = document.getElementById('apiKeyInput').value;
+      if (!key) {
+        toast('请输入 API Key');
         return;
       }
-
-      box.innerHTML = waiting.map((d, i)=>`
-        <div class="item">
-          <div class="item-head">
-            <div>
-              <div class="name">${i+1}. ${esc(d.name)}</div>
-              <div class="meta">
-                <span class="pill">${esc(d.source || '未知榜单')}</span>
-                <span class="pill">${esc(d.date || '')}</span>
-                ${d.genre ? `<span class="pill">${esc(d.genre)}</span>` : ''}
-              </div>
-            </div>
-            <div class="row">
-              <button class="btn btn-ok btn-mini" data-action="mark-watched" data-id="${d.id}">看完</button>
-              <button class="btn btn-warn btn-mini" data-action="mark-analyze" data-id="${d.id}">待拆解</button>
-              <button class="btn btn-soft btn-mini" data-action="edit-drama" data-id="${d.id}">标注</button>
-              <button class="btn btn-soft btn-mini" data-action="skip-drama" data-id="${d.id}">跳过</button>
-            </div>
-          </div>
-        </div>
-      `).join('');
+      setApiKeyValue(key);
+      toast('API Key 已保存');
     }
 
-    // ===== 榜单识别 =====
-    let currentBase64 = '';
-    let currentRecognized = [];
+    function loadSettings() {
+      document.getElementById('apiKeyInput').value = getApiKey();
+    }
 
-    function fileToBase64(file){
-      return new Promise((resolve, reject)=>{
-        const reader = new FileReader();
-        reader.onload = ()=> resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
+    document.addEventListener('DOMContentLoaded', function(){
+      var input = document.getElementById('imageInput');
+      if (input) {
+        input.addEventListener('change', function(e){
+          var file = e.target.files[0];
+          if (!file) return;
+          var reader = new FileReader();
+          reader.onload = function(ev){
+            var img = document.getElementById('previewImage');
+            img.src = ev.target.result;
+            img.style.display = 'block';
+            window._currentImageBase64 = ev.target.result;
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      document.addEventListener('paste', function(e){
+        var items = e.clipboardData && e.clipboardData.items;
+        if (!items) return;
+        var i;
+        for (i = 0; i < items.length; i++) {
+          if (items[i].type.indexOf('image/') === 0) {
+            var file = items[i].getAsFile();
+            var reader = new FileReader();
+            reader.onload = function(ev){
+              var img = document.getElementById('previewImage');
+              img.src = ev.target.result;
+              img.style.display = 'block';
+              window._currentImageBase64 = ev.target.result;
+              toast('已粘贴截图');
+            };
+            reader.readAsDataURL(file);
+            break;
+          }
+        }
       });
-    }
 
-    async function handleImageFile(file){
-      if(!file) return;
-      const base64 = await fileToBase64(file);
-      currentBase64 = base64;
-      const img = document.getElementById('previewImage');
-      img.src = base64;
-      img.style.display = 'block';
-      toast('图片已载入');
-    }
+      renderToday();
+      renderDramaTable();
+      renderFormulaList();
+      renderMaterialList();
+      loadSettings();
+      renderFormulaRefsBox();
+    });
 
-    async function recognizeImage(){
-      if(!currentBase64){
-        toast('请先上传或粘贴截图');
+    async function recognizeImage() {
+      if (!window._currentImageBase64) {
+        toast('请先上传图片');
         return;
       }
-      const apiKey = getApiKey();
-      if(!apiKey){
-        toast('请先在设置里填写 API Key');
-        activatePage('settings');
+      var apiKey = getApiKey();
+      if (!apiKey) {
+        toast('请先去设置里保存 API Key');
         return;
       }
 
-      const strict = document.getElementById('recognizeMode').value === 'strict';
-      const prompt = strict
-        ? '这是短剧/网剧榜单截图。请只输出剧名，每行一个，不要输出序号、热度、榜单标题、说明、平台名。'
-        : '请识别截图中的剧名，每行输出一个剧名。';
-
-      const btn = document.getElementById('btnRecognize');
-      btn.disabled = true;
-      btn.textContent = '识别中...';
-
-      try{
-        const res = await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', {
-          method:'POST',
-          headers:{
-            'Content-Type':'application/json',
-            'Authorization':'Bearer ' + apiKey
+      toast('正在识别，请稍等...');
+      try {
+        var response = await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + apiKey
           },
           body: JSON.stringify({
-            model:'qwen-vl-max',
-            messages:[{
-              role:'user',
-              content:[
-                { type:'image_url', image_url:{ url: currentBase64 } },
-                { type:'text', text: prompt }
+            model: 'qwen-vl-max',
+            messages: [{
+              role: 'user',
+              content: [
+                { type: 'image_url', image_url: { url: window._currentImageBase64 } },
+                { type: 'text', text: '这是一张短剧榜单截图，请提取所有剧名，每行一个，只输出剧名，不要输出其他文字。' }
               ]
             }]
           })
         });
 
-        const data = await res.json();
-        if(!res.ok){
-          throw new Error(data?.error?.message || data?.message || '识别失败');
+        var data = await response.json();
+        if (!response.ok) {
+          throw new Error((data && data.error && data.error.message) || '识别失败');
         }
 
-        let content = data?.choices?.[0]?.message?.content || '';
-        if(Array.isArray(content)){
-          content = content.map(v=>v.text || '').join('\n');
+        var content = data.choices[0].message.content;
+        if (typeof content !== 'string') {
+          content = JSON.stringify(content);
         }
 
-        const names = String(content)
-          .split('\n')
-          .map(v=>normalizeDramaName(v))
-          .filter(v=>v && v.length >= 2);
-
-        const uniq = [];
-        const seen = new Set();
-        for(const n of names){
-          if(!seen.has(n)){
-            seen.add(n);
-            uniq.push(n);
+        var arr = content.split('\n');
+        var i, name;
+        var map = {};
+        var result = [];
+        for (i = 0; i < arr.length; i++) {
+          name = normalizeDramaName(arr[i]);
+          if (name && name.length >= 2 && !map[name]) {
+            map[name] = true;
+            result.push(name);
           }
         }
 
-        currentRecognized = uniq;
-        renderRecognized();
-        toast(`识别完成，共 ${uniq.length} 部`);
-      }catch(err){
-        console.error(err);
-        toast('识别失败：' + err.message);
-      }finally{
-        btn.disabled = false;
-        btn.textContent = '✨ AI识别剧名';
+        currentRecognized = result;
+        renderRecognizedList();
+        toast('识别完成，共 ' + result.length + ' 部');
+      } catch (e) {
+        toast('识别失败：' + e.message);
       }
     }
 
-    function renderRecognized(){
-      const list = document.getElementById('resultList');
-      if(currentRecognized.length === 0){
-        list.innerHTML = `<div class="empty">还没有识别结果</div>`;
-        return;
-      }
-
-      const existing = new Set(getDramas().map(d=>d.name));
-
-      list.innerHTML = currentRecognized.map((name, idx)=>{
-        const dup = existing.has(name);
-        return `
-          <div class="result-item ${dup ? 'dup' : ''}">
-            <input type="checkbox" class="rec-check" data-idx="${idx}" ${dup ? '' : 'checked'}>
-            <input type="text" class="rec-name" data-idx="${idx}" value="${esc(name)}">
-            <span class="pill">${dup ? '重复' : '新剧'}</span>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function selectRecognized(v){
-      document.querySelectorAll('.rec-check').forEach(x=>x.checked = v);
-    }
-
-    function clearImageArea(){
-      currentBase64 = '';
+    function clearRecognize() {
       currentRecognized = [];
-      document.getElementById('previewImage').src = '';
-      document.getElementById('previewImage').style.display = 'none';
+      window._currentImageBase64 = '';
+      document.getElementById('recognizedList').innerHTML = '';
       document.getElementById('imageInput').value = '';
-      document.getElementById('resultList').innerHTML = '';
+      var img = document.getElementById('previewImage');
+      img.src = '';
+      img.style.display = 'none';
     }
 
-    function importRecognized(){
-      const dramas = getDramas();
-      const existing = new Set(dramas.map(d=>d.name));
-      const source = document.getElementById('sourceBoard').value;
-      let add = 0, skip = 0;
+    function renderRecognizedList() {
+      var dramas = getDramas();
+      var existMap = {};
+      var i;
+      for (i = 0; i < dramas.length; i++) {
+        existMap[dramas[i].name] = true;
+      }
 
-      document.querySelectorAll('.rec-check').forEach(ch=>{
-        if(!ch.checked) return;
-        const idx = ch.dataset.idx;
-        const input = document.querySelector(`.rec-name[data-idx="${idx}"]`);
-        const name = normalizeDramaName(input?.value || '');
-        if(!name) return;
-        if(existing.has(name)){
-          skip++;
-          return;
-        }
+      var html = '';
+      for (i = 0; i < currentRecognized.length; i++) {
+        var name = currentRecognized[i];
+        var dup = existMap[name];
+        html += '<div class="item" style="' + (dup ? 'opacity:.5;' : '') + '">';
+        html += '<input type="checkbox" class="recognizedCheck" data-index="' + i + '" ' + (dup ? '' : 'checked') + '> ';
+        html += '<input type="text" class="input recognizedName" data-index="' + i + '" value="' + esc(name) + '" style="margin-top:8px;">';
+        html += '<div class="meta">' + (dup ? '重复剧名' : '新剧') + '</div>';
+        html += '</div>';
+      }
+      if (!html) html = '<div class="item">还没有识别结果</div>';
+      document.getElementById('recognizedList').innerHTML = html;
+    }
+
+    function selectRecognized(checked) {
+      var checks = document.getElementsByClassName('recognizedCheck');
+      var i;
+      for (i = 0; i < checks.length; i++) {
+        checks[i].checked = checked;
+      }
+    }
+
+    function importRecognized() {
+      var dramas = getDramas();
+      var existMap = {};
+      var i;
+      for (i = 0; i < dramas.length; i++) existMap[dramas[i].name] = true;
+
+      var checks = document.getElementsByClassName('recognizedCheck');
+      var names = document.getElementsByClassName('recognizedName');
+      var source = document.getElementById('sourceBoard').value;
+      var addCount = 0;
+
+      for (i = 0; i < checks.length; i++) {
+        if (!checks[i].checked) continue;
+        var name = normalizeDramaName(names[i].value);
+        if (!name || existMap[name]) continue;
         dramas.unshift({
           id: uid(),
-          name,
-          genre:'',
-          source,
-          status:'待看',
-          rating:'',
-          note:'',
-          analyze:'否',
-          link:'',
-          date:today()
+          name: name,
+          genre: '',
+          source: source,
+          status: '待看',
+          rating: '',
+          note: '',
+          analyze: '否',
+          link: '',
+          date: today()
         });
-        existing.add(name);
-        add++;
-      });
-
-      setDramas(dramas);
-      renderRecognized();
-      renderToday();
-      renderDramaTable();
-      toast(`导入成功：${add} 部，跳过重复：${skip} 部`);
-      activatePage('today');
-    }
-
-    // ===== 剧库 =====
-    function renderDramaTable(){
-      const search = document.getElementById('searchDrama').value.trim().toLowerCase();
-      const status = document.getElementById('filterStatus').value;
-      const genre = document.getElementById('filterGenre').value;
-
-      let dramas = getDramas().filter(d=>{
-        const text = `${d.name} ${d.note || ''}`.toLowerCase();
-        return (!search || text.includes(search))
-          && (!status || d.status === status)
-          && (!genre || d.genre === genre);
-      });
-
-      const body = document.getElementById('dramaTableBody');
-      const empty = document.getElementById('dramaEmpty');
-
-      if(dramas.length === 0){
-        body.innerHTML = '';
-        empty.style.display = 'block';
-        return;
+        existMap[name] = true;
+        addCount++;
       }
-      empty.style.display = 'none';
-
-      body.innerHTML = dramas.map(d=>`
-        <tr>
-          <td><b>${esc(d.name)}</b></td>
-          <td>${esc(d.genre || '-')}</td>
-          <td>${esc(d.source || '-')}</td>
-          <td><span class="pill pill-status-${esc(d.status)}">${esc(d.status)}</span></td>
-          <td>${esc(d.rating || '-')}</td>
-          <td>${esc(d.note || '-')}</td>
-          <td>${esc(d.date || '-')}</td>
-          <td>
-            <div class="row">
-              <button class="btn btn-soft btn-mini" data-action="edit-drama" data-id="${d.id}">编辑</button>
-              <button class="btn btn-warn btn-mini" data-action="open-formula-picker" data-id="${d.id}">加到公式书</button>
-              <button class="btn btn-danger btn-mini" data-action="delete-drama" data-id="${d.id}">删除</button>
-            </div>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    function openDramaModal(id){
-      const d = getDramas().find(x=>x.id===id);
-      if(!d) return;
-      document.getElementById('editDramaId').value = d.id;
-      document.getElementById('editDramaName').value = d.name || '';
-      document.getElementById('editDramaGenre').value = d.genre || '';
-      document.getElementById('editDramaStatus').value = d.status || '待看';
-      document.getElementById('editDramaRating').value = d.rating || '';
-      document.getElementById('editDramaAnalyze').value = d.analyze || '否';
-      document.getElementById('editDramaLink').value = d.link || '';
-      document.getElementById('editDramaNote').value = d.note || '';
-      document.getElementById('dramaModal').classList.add('show');
-    }
-
-    function closeDramaModal(){
-      document.getElementById('dramaModal').classList.remove('show');
-    }
-
-    function saveDramaEdit(){
-      const id = document.getElementById('editDramaId').value;
-      const dramas = getDramas();
-      const idx = dramas.findIndex(d=>d.id===id);
-      if(idx < 0) return;
-
-      dramas[idx] = {
-        ...dramas[idx],
-        name: document.getElementById('editDramaName').value.trim(),
-        genre: document.getElementById('editDramaGenre').value,
-        status: document.getElementById('editDramaStatus').value,
-        rating: document.getElementById('editDramaRating').value,
-        analyze: document.getElementById('editDramaAnalyze').value,
-        link: document.getElementById('editDramaLink').value.trim(),
-        note: document.getElementById('editDramaNote').value.trim()
-      };
 
       setDramas(dramas);
-      closeDramaModal();
       renderToday();
       renderDramaTable();
-      toast('剧目已保存');
+      renderRecognizedList();
+      toast('已导入 ' + addCount + ' 部剧');
     }
 
-    function deleteDrama(id){
-      if(!confirm('确定删除这条剧目记录吗？')) return;
-      setDramas(getDramas().filter(d=>d.id !== id));
+    function renderDramaTable() {
+      var dramas = getDramas();
+      var search = document.getElementById('searchDrama').value.toLowerCase();
+      var status = document.getElementById('filterDramaStatus').value;
+      var genre = document.getElementById('filterDramaGenre').value;
+
+      var html = '';
+      var i;
+      for (i = 0; i < dramas.length; i++) {
+        var d = dramas[i];
+        var text = (d.name + ' ' + (d.note || '')).toLowerCase();
+        if (search && text.indexOf(search) === -1) continue;
+        if (status && d.status !== status) continue;
+        if (genre && d.genre !== genre) continue;
+
+        html += '<tr>';
+        html += '<td>' + esc(d.name) + '</td>';
+        html += '<td>' + esc(d.genre || '-') + '</td>';
+        html += '<td>' + esc(d.source || '-') + '</td>';
+        html += '<td><span class="pill status-' + esc(d.status) + '">' + esc(d.status) + '</span></td>';
+        html += '<td>' + esc(d.rating || '-') + '</td>';
+        html += '<td>' + esc(d.note || '-') + '</td>';
+        html += '<td>';
+        html += '<button class="btn btn-soft" onclick="editDrama(\'' + d.id + '\')">编辑</button>';
+        html += '<button class="btn btn-yellow" onclick="openFormulaAttach(\'' + d.id + '\')">加到公式书</button>';
+        html += '<button class="btn btn-red" onclick="deleteDrama(\'' + d.id + '\')">删除</button>';
+        html += '</td>';
+        html += '</tr>';
+      }
+
+      if (!html) {
+        html = '<tr><td colspan="7">暂无数据</td></tr>';
+      }
+      document.getElementById('dramaTableBody').innerHTML = html;
+    }
+
+    function editDrama(id) {
+      var dramas = getDramas();
+      var i, d = null;
+      for (i = 0; i < dramas.length; i++) {
+        if (dramas[i].id === id) { d = dramas[i]; break; }
+      }
+      if (!d) return;
+
+      var name = prompt('剧名：', d.name);
+      if (name === null) return;
+
+      var genre = prompt('题材（甜宠/战神/重生/逆袭/虐恋/悬疑/古装/都市/其他）：', d.genre || '');
+      if (genre === null) genre = d.genre || '';
+
+      var status = prompt('状态（待看/已看/待拆解/已拆解/跳过）：', d.status || '待看');
+      if (status === null) status = d.status || '待看';
+
+      var rating = prompt('评分（⭐到⭐⭐⭐⭐⭐）：', d.rating || '');
+      if (rating === null) rating = d.rating || '';
+
+      var note = prompt('备注：', d.note || '');
+      if (note === null) note = d.note || '';
+
+      d.name = name;
+      d.genre = genre;
+      d.status = status;
+      d.rating = rating;
+      d.note = note;
+
+      setDramas(dramas);
+      renderToday();
+      renderDramaTable();
+      toast('剧目已更新');
+    }
+
+    function deleteDrama(id) {
+      if (!confirm('确定删除这条剧目吗？')) return;
+      var dramas = getDramas();
+      var result = [];
+      var i;
+      for (i = 0; i < dramas.length; i++) {
+        if (dramas[i].id !== id) result.push(dramas[i]);
+      }
+      setDramas(result);
       renderToday();
       renderDramaTable();
       toast('已删除');
     }
 
-    function markWatched(id){
-      const dramas = getDramas();
-      const idx = dramas.findIndex(d=>d.id===id);
-      if(idx<0) return;
-      dramas[idx].status = '已看';
+    function markWatched(id) {
+      var dramas = getDramas();
+      var i;
+      for (i = 0; i < dramas.length; i++) {
+        if (dramas[i].id === id) dramas[i].status = '已看';
+      }
       setDramas(dramas);
       renderToday();
       renderDramaTable();
       toast('已标记为已看');
     }
 
-    function markAnalyze(id){
-      const dramas = getDramas();
-      const idx = dramas.findIndex(d=>d.id===id);
-      if(idx<0) return;
-      dramas[idx].status = '待拆解';
-      dramas[idx].analyze = '是';
+    function markToAnalyze(id) {
+      var dramas = getDramas();
+      var i;
+      for (i = 0; i < dramas.length; i++) {
+        if (dramas[i].id === id) {
+          dramas[i].status = '待拆解';
+          dramas[i].analyze = '是';
+        }
+      }
       setDramas(dramas);
       renderToday();
       renderDramaTable();
-      toast('已加入待拆解');
+      toast('已标记为待拆解');
     }
 
-    function skipDrama(id){
-      const dramas = getDramas();
-      const idx = dramas.findIndex(d=>d.id===id);
-      if(idx<0) return;
-      dramas[idx].status = '跳过';
+    function skipDrama(id) {
+      var dramas = getDramas();
+      var i;
+      for (i = 0; i < dramas.length; i++) {
+        if (dramas[i].id === id) dramas[i].status = '跳过';
+      }
       setDramas(dramas);
       renderToday();
       renderDramaTable();
       toast('已跳过');
     }
 
-    // ===== 公式书 =====
-    let currentFormulaRefs = [];
+    function renderFormulaRefsBox() {
+      var box = document.getElementById('formulaRefsBox');
+      if (!currentFormulaRefs.length) {
+        box.innerHTML = '还没有参考剧目';
+        return;
+      }
+      var html = '';
+      var i;
+      for (i = 0; i < currentFormulaRefs.length; i++) {
+        html += '<span class="pill">' + esc(currentFormulaRefs[i]) + ' <a href="javascript:void(0)" onclick="removeFormulaRef(' + i + ')">×</a></span>';
+      }
+      box.innerHTML = html;
+    }
 
-    function resetFormulaForm(){
+    function removeFormulaRef(index) {
+      currentFormulaRefs.splice(index, 1);
+      renderFormulaRefsBox();
+    }
+
+    function resetFormulaForm() {
       document.getElementById('formulaId').value = '';
       document.getElementById('formulaTitle').value = '';
       document.getElementById('formulaGenre').value = '甜宠';
@@ -1171,104 +1014,79 @@
       document.getElementById('formulaRewrite').value = '';
       document.getElementById('formulaNote').value = '';
       currentFormulaRefs = [];
-      renderFormulaRefs();
+      renderFormulaRefsBox();
     }
 
-    function renderFormulaRefs(){
-      const box = document.getElementById('formulaRefBox');
-      if(!currentFormulaRefs.length){
-        box.innerHTML = '还没添加参考剧目';
-        return;
-      }
-      box.innerHTML = currentFormulaRefs.map((name, idx)=>`
-        <span class="tag-chip">${esc(name)}
-          <button style="margin-left:6px;border:none;background:none;color:#b16fd1;cursor:pointer;font-weight:800;" data-action="remove-formula-ref" data-idx="${idx}">×</button>
-        </span>
-      `).join('');
-    }
-
-    function saveFormula(){
-      const title = document.getElementById('formulaTitle').value.trim();
-      if(!title){
+    function saveFormula() {
+      var title = document.getElementById('formulaTitle').value;
+      if (!title) {
         toast('请填写公式名称');
         return;
       }
 
-      const item = {
+      var item = {
         id: document.getElementById('formulaId').value || uid(),
-        title,
+        title: title,
         genre: document.getElementById('formulaGenre').value,
-        character: document.getElementById('formulaCharacter').value.trim(),
-        framework: document.getElementById('formulaFramework').value.trim(),
-        event: document.getElementById('formulaEvent').value.trim(),
-        rewrite: document.getElementById('formulaRewrite').value.trim(),
-        note: document.getElementById('formulaNote').value.trim(),
-        refs: [...currentFormulaRefs],
+        character: document.getElementById('formulaCharacter').value,
+        framework: document.getElementById('formulaFramework').value,
+        event: document.getElementById('formulaEvent').value,
+        rewrite: document.getElementById('formulaRewrite').value,
+        note: document.getElementById('formulaNote').value,
+        refs: currentFormulaRefs.slice(0),
         updatedAt: today()
       };
 
-      const formulas = getFormulas();
-      const idx = formulas.findIndex(f=>f.id === item.id);
-      if(idx >= 0) formulas[idx] = item;
-      else formulas.unshift(item);
+      var list = getFormulas();
+      var i, found = false;
+      for (i = 0; i < list.length; i++) {
+        if (list[i].id === item.id) {
+          list[i] = item;
+          found = true;
+        }
+      }
+      if (!found) list.unshift(item);
 
-      setFormulas(formulas);
+      setFormulas(list);
       renderFormulaList();
       resetFormulaForm();
       toast('公式已保存');
     }
 
-    function renderFormulaList(){
-      const search = document.getElementById('searchFormula').value.trim().toLowerCase();
-      const genre = document.getElementById('filterFormulaGenre').value;
+    function renderFormulaList() {
+      var list = getFormulas();
+      var search = document.getElementById('searchFormula').value.toLowerCase();
+      var genre = document.getElementById('filterFormulaGenre').value;
+      var html = '';
+      var i;
+      for (i = 0; i < list.length; i++) {
+        var f = list[i];
+        var text = (f.title + ' ' + (f.note || '') + ' ' + (f.refs || []).join(' ')).toLowerCase();
+        if (search && text.indexOf(search) === -1) continue;
+        if (genre && f.genre !== genre) continue;
 
-      let formulas = getFormulas().filter(f=>{
-        const txt = `${f.title} ${f.note || ''} ${(f.refs || []).join(' ')}`.toLowerCase();
-        return (!search || txt.includes(search))
-          && (!genre || f.genre === genre);
-      });
-
-      const box = document.getElementById('formulaList');
-      if(!formulas.length){
-        box.innerHTML = `<div class="empty">还没有公式，先拆一个类型吧 ✨</div>`;
-        return;
+        html += '<div class="item">';
+        html += '<div class="item-title">' + esc(f.title) + '</div>';
+        html += '<div class="meta"><span class="pill">' + esc(f.genre) + '</span><span class="pill">更新：' + esc(f.updatedAt || '') + '</span></div>';
+        html += '<div><b>参考剧：</b> ' + esc((f.refs || []).join('、') || '无') + '</div>';
+        html += '<div style="margin-top:8px;">';
+        html += '<button class="btn btn-soft" onclick="editFormula(\'' + f.id + '\')">编辑</button>';
+        html += '<button class="btn btn-red" onclick="deleteFormula(\'' + f.id + '\')">删除</button>';
+        html += '</div>';
+        html += '</div>';
       }
-
-      box.innerHTML = formulas.map(f=>`
-        <div class="item">
-          <div class="item-head">
-            <div>
-              <div class="name">${esc(f.title)}</div>
-              <div class="meta">
-                <span class="pill">${esc(f.genre)}</span>
-                <span class="pill">更新：${esc(f.updatedAt || '')}</span>
-                <span class="pill">参考剧：${(f.refs || []).length}</span>
-              </div>
-            </div>
-            <div class="row">
-              <button class="btn btn-soft btn-mini" data-action="edit-formula" data-id="${f.id}">编辑</button>
-              <button class="btn btn-danger btn-mini" data-action="delete-formula" data-id="${f.id}">删除</button>
-            </div>
-          </div>
-          <div style="margin-top:10px;font-size:13px;line-height:1.8;">
-            <b>人设：</b>${esc((f.character || '').slice(0,80))}${(f.character || '').length>80?'...':''}<br>
-            <b>框架：</b>${esc((f.framework || '').slice(0,80))}${(f.framework || '').length>80?'...':''}<br>
-            <b>事件：</b>${esc((f.event || '').slice(0,80))}${(f.event || '').length>80?'...':''}
-          </div>
-          ${(f.refs || []).length ? `
-            <div class="formula-ref">
-              <b>参考剧：</b><br>
-              ${(f.refs || []).map(x=>`<span class="tag-chip">${esc(x)}</span>`).join('')}
-            </div>
-          ` : ''}
-        </div>
-      `).join('');
+      if (!html) html = '<div class="item">还没有公式书记录</div>';
+      document.getElementById('formulaList').innerHTML = html;
     }
 
-    function editFormula(id){
-      const f = getFormulas().find(x=>x.id===id);
-      if(!f) return;
-      activatePage('formula');
+    function editFormula(id) {
+      var list = getFormulas();
+      var i, f = null;
+      for (i = 0; i < list.length; i++) {
+        if (list[i].id === id) { f = list[i]; break; }
+      }
+      if (!f) return;
+
       document.getElementById('formulaId').value = f.id;
       document.getElementById('formulaTitle').value = f.title || '';
       document.getElementById('formulaGenre').value = f.genre || '甜宠';
@@ -1277,92 +1095,67 @@
       document.getElementById('formulaEvent').value = f.event || '';
       document.getElementById('formulaRewrite').value = f.rewrite || '';
       document.getElementById('formulaNote').value = f.note || '';
-      currentFormulaRefs = [...(f.refs || [])];
-      renderFormulaRefs();
-      window.scrollTo({top:0,behavior:'smooth'});
+      currentFormulaRefs = (f.refs || []).slice(0);
+      renderFormulaRefsBox();
+      toast('已载入公式，可编辑');
     }
 
-    function deleteFormula(id){
-      if(!confirm('确定删除这条公式吗？')) return;
-      setFormulas(getFormulas().filter(f=>f.id !== id));
+    function deleteFormula(id) {
+      if (!confirm('确定删除这条公式吗？')) return;
+      var list = getFormulas();
+      var result = [];
+      var i;
+      for (i = 0; i < list.length; i++) {
+        if (list[i].id !== id) result.push(list[i]);
+      }
+      setFormulas(result);
       renderFormulaList();
       toast('公式已删除');
     }
 
-    // ===== 剧库 -> 公式书联动 =====
-    function openFormulaPicker(dramaId){
-      const drama = getDramas().find(d=>d.id === dramaId);
-      if(!drama) return;
+    function openFormulaAttach(dramaId) {
+      var dramas = getDramas();
+      var formulas = getFormulas();
+      var d = null;
+      var i;
+      for (i = 0; i < dramas.length; i++) {
+        if (dramas[i].id === dramaId) d = dramas[i];
+      }
+      if (!d) return;
 
-      document.getElementById('pickerDramaId').value = dramaId;
-      document.getElementById('pickerDramaNameBox').innerHTML = `当前剧目：<b>${esc(drama.name)}</b>`;
-      const formulas = getFormulas();
-      const box = document.getElementById('formulaPickerList');
-
-      if(!formulas.length){
-        box.innerHTML = `<div class="empty">还没有公式书，先新建一个吧 ✨</div>`;
-      } else {
-        box.innerHTML = formulas.map(f=>`
-          <div class="item">
-            <div class="item-head">
-              <div>
-                <div class="name">${esc(f.title)}</div>
-                <div class="meta">
-                  <span class="pill">${esc(f.genre)}</span>
-                  <span class="pill">参考剧：${(f.refs || []).length}</span>
-                </div>
-              </div>
-              <button class="btn btn-primary btn-mini" data-action="attach-drama-to-formula" data-formula-id="${f.id}">加入这本公式</button>
-            </div>
-          </div>
-        `).join('');
+      if (!formulas.length) {
+        alert('还没有公式书，请先新建公式。');
+        showPage('formula', document.getElementsByClassName('tab-btn')[3]);
+        currentFormulaRefs = [d.name];
+        renderFormulaRefsBox();
+        return;
       }
 
-      document.getElementById('formulaPickerModal').classList.add('show');
-    }
-
-    function closeFormulaPicker(){
-      document.getElementById('formulaPickerModal').classList.remove('show');
-    }
-
-    function attachDramaToFormula(formulaId){
-      const dramaId = document.getElementById('pickerDramaId').value;
-      const drama = getDramas().find(d=>d.id === dramaId);
-      if(!drama) return;
-
-      const formulas = getFormulas();
-      const idx = formulas.findIndex(f=>f.id === formulaId);
-      if(idx < 0) return;
-
-      formulas[idx].refs = formulas[idx].refs || [];
-      if(!formulas[idx].refs.includes(drama.name)){
-        formulas[idx].refs.push(drama.name);
-        formulas[idx].updatedAt = today();
-        setFormulas(formulas);
-        renderFormulaList();
-        toast(`已将《${drama.name}》加入公式书`);
-      } else {
-        toast('这部剧已经在该公式书里了');
+      var names = [];
+      for (i = 0; i < formulas.length; i++) {
+        names.push((i + 1) + '.' + formulas[i].title);
       }
-      closeFormulaPicker();
-    }
 
-    function createFormulaFromPicker(){
-      const dramaId = document.getElementById('pickerDramaId').value;
-      const drama = getDramas().find(d=>d.id === dramaId);
-      closeFormulaPicker();
-      activatePage('formula');
-      resetFormulaForm();
-      if(drama){
-        currentFormulaRefs = [drama.name];
-        renderFormulaRefs();
-        if(drama.genre) document.getElementById('formulaGenre').value = drama.genre;
+      var choice = prompt('把《' + d.name + '》加入哪一本公式书？\n\n' + names.join('\n') + '\n\n输入数字：');
+      if (choice === null) return;
+      var index = parseInt(choice, 10) - 1;
+      if (index < 0 || index >= formulas.length) {
+        alert('输入无效');
+        return;
       }
-      toast('已带入参考剧，请继续填写公式内容');
+
+      if (!formulas[index].refs) formulas[index].refs = [];
+      if (formulas[index].refs.indexOf(d.name) === -1) {
+        formulas[index].refs.push(d.name);
+        formulas[index].updatedAt = today();
+      }
+
+      setFormulas(formulas);
+      renderFormulaList();
+      toast('已加入公式书');
     }
 
-    // ===== 素材库 =====
-    function resetMaterialForm(){
+    function resetMaterialForm() {
       document.getElementById('materialId').value = '';
       document.getElementById('materialContent').value = '';
       document.getElementById('materialType').value = '灵感';
@@ -1371,311 +1164,191 @@
       document.getElementById('materialSource').value = '';
     }
 
-    function saveMaterial(){
-      const content = document.getElementById('materialContent').value.trim();
-      if(!content){
+    function saveMaterial() {
+      var content = document.getElementById('materialContent').value;
+      if (!content) {
         toast('请填写素材内容');
         return;
       }
 
-      const item = {
+      var item = {
         id: document.getElementById('materialId').value || uid(),
-        content,
+        content: content,
         type: document.getElementById('materialType').value,
-        genre: document.getElementById('materialGenre').value.trim(),
-        tags: document.getElementById('materialTags').value.trim(),
-        source: document.getElementById('materialSource').value.trim(),
+        genre: document.getElementById('materialGenre').value,
+        tags: document.getElementById('materialTags').value,
+        source: document.getElementById('materialSource').value,
         used: false,
         createdAt: today()
       };
 
-      const materials = getMaterials();
-      const idx = materials.findIndex(m=>m.id === item.id);
-      if(idx >= 0) materials[idx] = {...materials[idx], ...item};
-      else materials.unshift(item);
+      var list = getMaterials();
+      var i, found = false;
+      for (i = 0; i < list.length; i++) {
+        if (list[i].id === item.id) {
+          list[i] = item;
+          found = true;
+        }
+      }
+      if (!found) list.unshift(item);
 
-      setMaterials(materials);
+      setMaterials(list);
       resetMaterialForm();
       renderMaterialList();
       toast('素材已保存');
     }
 
-    function renderMaterialList(){
-      const search = document.getElementById('searchMaterial').value.trim().toLowerCase();
-      const type = document.getElementById('filterMaterialType').value;
+    function renderMaterialList() {
+      var list = getMaterials();
+      var search = document.getElementById('searchMaterial').value.toLowerCase();
+      var type = document.getElementById('filterMaterialType').value;
+      var html = '';
+      var i;
+      for (i = 0; i < list.length; i++) {
+        var m = list[i];
+        var text = (m.content + ' ' + (m.tags || '') + ' ' + (m.source || '')).toLowerCase();
+        if (search && text.indexOf(search) === -1) continue;
+        if (type && m.type !== type) continue;
 
-      let materials = getMaterials().filter(m=>{
-        const txt = `${m.content} ${m.tags || ''} ${m.source || ''}`.toLowerCase();
-        return (!search || txt.includes(search))
-          && (!type || m.type === type);
-      });
-
-      const box = document.getElementById('materialList');
-      if(!materials.length){
-        box.innerHTML = `<div class="empty">素材库还空着，先记一点灵感吧 🌷</div>`;
-        return;
+        html += '<div class="item" style="' + (m.used ? 'opacity:.55;' : '') + '">';
+        html += '<div class="item-title">' + esc(m.content) + '</div>';
+        html += '<div class="meta">';
+        html += '<span class="pill">' + esc(m.type) + '</span>';
+        if (m.genre) html += '<span class="pill">' + esc(m.genre) + '</span>';
+        if (m.tags) html += '<span class="pill">' + esc(m.tags) + '</span>';
+        if (m.source) html += '<span class="pill">来源：' + esc(m.source) + '</span>';
+        html += '</div>';
+        html += '<button class="btn btn-soft" onclick="toggleMaterialUsed(\'' + m.id + '\')">' + (m.used ? '改为未用' : '标记已用') + '</button>';
+        html += '<button class="btn btn-soft" onclick="editMaterial(\'' + m.id + '\')">编辑</button>';
+        html += '<button class="btn btn-red" onclick="deleteMaterial(\'' + m.id + '\')">删除</button>';
+        html += '</div>';
       }
-
-      box.innerHTML = materials.map(m=>`
-        <div class="item" style="${m.used ? 'opacity:.58;' : ''}">
-          <div class="item-head">
-            <div>
-              <div style="font-size:14px;line-height:1.8;">${esc(m.content)}</div>
-              <div class="meta">
-                <span class="pill">${esc(m.type)}</span>
-                ${m.genre ? `<span class="pill">${esc(m.genre)}</span>` : ''}
-                ${m.tags ? `<span class="pill">${esc(m.tags)}</span>` : ''}
-                ${m.source ? `<span class="pill">来源：${esc(m.source)}</span>` : ''}
-                <span class="pill">${esc(m.createdAt || '')}</span>
-              </div>
-            </div>
-            <div class="row">
-              <button class="btn btn-soft btn-mini" data-action="toggle-material-used" data-id="${m.id}">
-                ${m.used ? '改未用' : '标已用'}
-              </button>
-              <button class="btn btn-soft btn-mini" data-action="edit-material" data-id="${m.id}">编辑</button>
-              <button class="btn btn-danger btn-mini" data-action="delete-material" data-id="${m.id}">删除</button>
-            </div>
-          </div>
-        </div>
-      `).join('');
+      if (!html) html = '<div class="item">还没有素材记录</div>';
+      document.getElementById('materialList').innerHTML = html;
     }
 
-    function editMaterial(id){
-      const m = getMaterials().find(x=>x.id===id);
-      if(!m) return;
-      activatePage('material');
+    function editMaterial(id) {
+      var list = getMaterials();
+      var i, m = null;
+      for (i = 0; i < list.length; i++) {
+        if (list[i].id === id) m = list[i];
+      }
+      if (!m) return;
+
       document.getElementById('materialId').value = m.id;
       document.getElementById('materialContent').value = m.content || '';
       document.getElementById('materialType').value = m.type || '灵感';
       document.getElementById('materialGenre').value = m.genre || '';
       document.getElementById('materialTags').value = m.tags || '';
       document.getElementById('materialSource').value = m.source || '';
-      window.scrollTo({top:0,behavior:'smooth'});
+      toast('已载入素材，可编辑');
     }
 
-    function toggleMaterialUsed(id){
-      const materials = getMaterials();
-      const idx = materials.findIndex(m=>m.id===id);
-      if(idx<0) return;
-      materials[idx].used = !materials[idx].used;
-      setMaterials(materials);
+    function toggleMaterialUsed(id) {
+      var list = getMaterials();
+      var i;
+      for (i = 0; i < list.length; i++) {
+        if (list[i].id === id) list[i].used = !list[i].used;
+      }
+      setMaterials(list);
       renderMaterialList();
     }
 
-    function deleteMaterial(id){
-      if(!confirm('确定删除这条素材吗？')) return;
-      setMaterials(getMaterials().filter(m=>m.id!==id));
+    function deleteMaterial(id) {
+      if (!confirm('确定删除这条素材吗？')) return;
+      var list = getMaterials();
+      var result = [];
+      var i;
+      for (i = 0; i < list.length; i++) {
+        if (list[i].id !== id) result.push(list[i]);
+      }
+      setMaterials(result);
       renderMaterialList();
       toast('素材已删除');
     }
 
-    function saveQuickIdea(){
-      const content = document.getElementById('quickIdeaText').value.trim();
-      const type = document.getElementById('quickIdeaType').value;
-      const genre = document.getElementById('quickIdeaGenre').value.trim();
-      if(!content){
-        toast('请输入灵感内容');
-        return;
+    function exportCSV() {
+      var dramas = getDramas();
+      var rows = [['剧名','题材','来源','状态','评分','备注','日期']];
+      var i;
+      for (i = 0; i < dramas.length; i++) {
+        rows.push([
+          dramas[i].name || '',
+          dramas[i].genre || '',
+          dramas[i].source || '',
+          dramas[i].status || '',
+          dramas[i].rating || '',
+          dramas[i].note || '',
+          dramas[i].date || ''
+        ]);
       }
-      const materials = getMaterials();
-      materials.unshift({
-        id: uid(),
-        content,
-        type,
-        genre,
-        tags:'',
-        source:'快速录入',
-        used:false,
-        createdAt:today()
-      });
-      setMaterials(materials);
-      document.getElementById('quickIdeaText').value = '';
-      document.getElementById('quickIdeaGenre').value = '';
-      toast('已保存到素材库');
-    }
-
-    // ===== 导出导入 =====
-    function exportCSV(){
-      const rows = [['剧名','题材','来源榜单','状态','评分','备注','是否拆解','链接','日期']];
-      getDramas().forEach(d=>{
-        rows.push([d.name,d.genre,d.source,d.status,d.rating,d.note,d.analyze,d.link,d.date]);
-      });
-      const csv = rows.map(row => row.map(v => `"${String(v || '').replaceAll('"','""')}"`).join(',')).join('\n');
-      const blob = new Blob(['\ufeff' + csv], {type:'text/csv;charset=utf-8;'});
-      const a = document.createElement('a');
+      var csv = '';
+      for (i = 0; i < rows.length; i++) {
+        var line = [];
+        var j;
+        for (j = 0; j < rows[i].length; j++) {
+          line.push('"' + String(rows[i][j]).replace(/"/g, '""') + '"');
+        }
+        csv += line.join(',') + '\n';
+      }
+      var blob = new Blob(['\ufeff' + csv], {type:'text/csv;charset=utf-8;'});
+      var a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = `剧库_${today()}.csv`;
+      a.download = '剧库_' + today() + '.csv';
       a.click();
     }
 
-    function exportJSON(){
-      const data = {
-        dramas:getDramas(),
-        formulas:getFormulas(),
-        materials:getMaterials(),
-        exportAt:new Date().toISOString()
+    function exportJSON() {
+      var data = {
+        dramas: getDramas(),
+        formulas: getFormulas(),
+        materials: getMaterials(),
+        exportAt: new Date().toISOString()
       };
-      const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
-      const a = document.createElement('a');
+      var blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+      var a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = `编剧第二大脑_${today()}.json`;
+      a.download = '编剧第二大脑_' + today() + '.json';
       a.click();
     }
 
-    function importJSON(file){
-      const reader = new FileReader();
-      reader.onload = ()=>{
-        try{
-          const data = JSON.parse(reader.result);
-          if(data.dramas) setDramas(data.dramas);
-          if(data.formulas) setFormulas(data.formulas);
-          if(data.materials) setMaterials(data.materials);
+    function triggerImportJSON() {
+      document.getElementById('jsonImportInput').click();
+    }
 
+    function handleImportJSON(event) {
+      var file = event.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        try {
+          var data = JSON.parse(ev.target.result);
+          如果 (数据.剧集) 设置剧集(数据.剧集);
+          如果 (data.公式) 设置公式(data.公式);
+          如果 (data.材料) 设置材料(data.材料);
           renderToday();
           renderDramaTable();
           renderFormulaList();
           renderMaterialList();
-          toast('导入成功');
-        }catch(e){
-          toast('导入失败，JSON格式不正确');
+          提示('导入成功');
+        } 捕获 (e) {
+          toast('导入失败');
         }
       };
       reader.readAsText(file, 'utf-8');
     }
 
-    function clearAllData(){
-      if(!confirm('确定清空全部数据吗？此操作不可撤销。')) return;
-      store.remove(DB.dramas);
-      store.remove(DB.formulas);
-      store.remove(DB.materials);
+    function clearAllData() {
+      if (!confirm('确定清空全部数据吗？')) return;
+      localStorage.removeItem(STORAGE_KEYS.dramas);
+      localStorage.removeItem(STORAGE_KEYS.formulas);
+      localStorage.removeItem(STORAGE_KEYS.materials);
       renderToday();
       renderDramaTable();
       renderFormulaList();
       renderMaterialList();
-      toast('已清空全部数据');
+      提示('已清空全部数据');
     }
-
-    // ===== 事件绑定 =====
-    function bindEvents(){
-      document.querySelectorAll('.tab').forEach(tab=>{
-        tab.addEventListener('click', ()=> activatePage(tab.dataset.page));
-      });
-
-      document.getElementById('btnRefreshToday').addEventListener('click', renderToday);
-      document.getElementById('btnQuickIdea').addEventListener('click', saveQuickIdea);
-
-      document.getElementById('imageInput').addEventListener('change', async e=>{
-        const file = e.target.files[0];
-        await handleImageFile(file);
-      });
-
-      document.addEventListener('paste', async e=>{
-        const items = e.clipboardData?.items || [];
-        for(const item of items){
-          if(item.type.startsWith('image/')){
-            const file = item.getAsFile();
-            await handleImageFile(file);
-            activatePage('import');
-            break;
-          }
-        }
-      });
-
-      document.getElementById('btnRecognize').addEventListener('click', recognizeImage);
-      document.getElementById('btnClearImage').addEventListener('click', clearImageArea);
-      document.getElementById('btnSelectAll').addEventListener('click', ()=>selectRecognized(true));
-      document.getElementById('btnUnselectAll').addEventListener('click', ()=>selectRecognized(false));
-      document.getElementById('btnImportSelected').addEventListener('click', importRecognized);
-
-      document.getElementById('searchDrama').addEventListener('input', renderDramaTable);
-      document.getElementById('filterStatus').addEventListener('change', renderDramaTable);
-      document.getElementById('filterGenre').addEventListener('change', renderDramaTable);
-      document.getElementById('btnExportCSV').addEventListener('click', exportCSV);
-      document.getElementById('btnExportAll').addEventListener('click', exportJSON);
-
-      document.getElementById('btnSaveFormula').addEventListener('click', saveFormula);
-      document.getElementById('btnResetFormula').addEventListener('click', resetFormulaForm);
-      document.getElementById('searchFormula').addEventListener('input', renderFormulaList);
-      document.getElementById('filterFormulaGenre').addEventListener('change', renderFormulaList);
-
-      document.getElementById('btnSaveMaterial').addEventListener('click', saveMaterial);
-      document.getElementById('btnResetMaterial').addEventListener('click', resetMaterialForm);
-      document.getElementById('searchMaterial').addEventListener('input', renderMaterialList);
-      document.getElementById('filterMaterialType').addEventListener('change', renderMaterialList);
-
-      document.getElementById('btnSaveApiKey').addEventListener('click', ()=>{
-        const key = document.getElementById('apiKeyInput').value.trim();
-        if(!key){
-          toast('请输入 API Key');
-          return;
-        }
-        setApiKey(key);
-        toast('API Key 已保存');
-      });
-
-      document.getElementById('btnExportJson').addEventListener('click', exportJSON);
-      document.getElementById('btnImportJson').addEventListener('click', ()=>{
-        document.getElementById('jsonFileInput').click();
-      });
-      document.getElementById('jsonFileInput').addEventListener('change', e=>{
-        const file = e.target.files[0];
-        if(file) importJSON(file);
-      });
-      document.getElementById('btnClearAll').addEventListener('click', clearAllData);
-
-      document.getElementById('btnCloseDramaModal').addEventListener('click', closeDramaModal);
-      document.getElementById('btnSaveDramaEdit').addEventListener('click', saveDramaEdit);
-      document.getElementById('dramaModal').addEventListener('click', e=>{
-        if(e.target.id === 'dramaModal') closeDramaModal();
-      });
-
-      document.getElementById('btnCloseFormulaPicker').addEventListener('click', closeFormulaPicker);
-      document.getElementById('btnCreateFormulaFromPicker').addEventListener('click', createFormulaFromPicker);
-      document.getElementById('formulaPickerModal').addEventListener('click', e=>{
-        if(e.target.id === 'formulaPickerModal') closeFormulaPicker();
-      });
-
-      document.body.addEventListener('click', e=>{
-        const btn = e.target.closest('[data-action]');
-        if(!btn) return;
-
-        const action = btn.dataset.action;
-        const id = btn.dataset.id;
-        const formulaId = btn.dataset.formulaId;
-        const idx = btn.dataset.idx;
-
-        if(action === 'edit-drama') openDramaModal(id);
-        else if(action === 'delete-drama') deleteDrama(id);
-        否则 如果(操作'标记为已读') 标记已读(id);
-        否则 如果(操作 === '标记-分析') 标记分析(id);
-        否则 如果(action === '跳过剧集') 跳过剧集(id);
-        else if(action === 'edit-formula') editFormula(id);
-        else if(action === 'delete-formula') deleteFormula(id);
-        else if(action === 'edit-material') editMaterial(id);
-        else if(action === 'delete-material') deleteMaterial(id);
-        else if(action === 'toggle-material-used') toggleMaterialUsed(id);
-        否则 如果(action === 'open-formula-picker') openFormulaPicker(id);
-        else if(action === 'attach-drama-to-formula') attachDramaToFormula(btn.dataset.formulaId);
-        else if(action === 'remove-formula-ref'){
-          currentFormulaRefs.splice(Number(idx),1);
-          renderFormulaRefs();
-        }
-      });
-    }
-
-    // ===== 初始化 =====
-    function init(){
-      bindEvents();
-      document.getElementById('apiKeyInput').value = getApiKey();
-      renderToday();
-      renderDramaTable();
-      renderFormulaList();
-      renderMaterialList();
-      renderFormulaRefs();
-    }
-
-    window.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
 </html>
