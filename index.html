@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -1521,8 +1522,8 @@
       // 剧目弹窗
       document.getElementById('btnCloseDramaModal').addEventListener('click', closeDramaModal);
       document.getElementById('btnSaveDramaEdit').addEventListener('click', saveDramaEdit);
-      document.getElementById('dramaModal')addEventListener('click', e=>{
-        如果(e.targetid==='dramaModal')关闭DramaModal;
+      document.getElementById('dramaModal').addEventListener('click', (e)=>{
+        if(e.target.id === 'dramaModal') closeDramaModal();
       });
 
       // 列表委托：今日待看、剧库、公式、素材
@@ -1535,7 +1536,7 @@
         if(action === 'edit-drama') openDramaModal(id);
         else if(action === 'delete-drama') deleteDrama(id);
         else if(action === 'watch-done') markDramaWatched(id);
-        否则 如果(操作 === '跳过剧集') 跳过剧集(id);
+        else if(action === 'skip-drama') skipDrama(id);
         else if(action === 'edit-formula') editFormula(id);
         else if(action === 'delete-formula') deleteFormula(id);
         else if(action === 'edit-material') editMaterial(id);
@@ -1558,3 +1559,4 @@
   </script>
 </body>
 </html>
+```
