@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>编剧第二大脑</title>
+<style>
+  /* ===== 基础重置 ===== */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  :root {
+    --primary: #6366f1;
+    --primary-light: #818cf8;
+    --bg: #0f0f13;
+    --card: #1a1a24;
+    --card2: #22222f;
+    --border: #2e2e3e;
+    --text: #e2e2f0;
+    --text2: #9090a8;
+    --green: #22c55e;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+    --blue: #3b82f6;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ===== 顶部导航 ===== */
+  .nav {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .nav-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary-light);
+    margin-right: 16px;
+  }
+
+  .nav-tab {
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: none;
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+  }
+
+  .nav-tab.active {
+    background: var(--primary);
+    color: white;
+  }
+
+  /* ===== 主内容区 ===== */
+  .page { display: none; padding: 20px; max-width: 1200px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  /* ===== 卡片 ===== */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  /* ===== 按钮 ===== */
+  .btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: var(--primary-light); }
+  .btn-success { background: var(--green); color: white; }
+  .btn-danger { background: var(--red); color: white; }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text2);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--primary); color: var(--primary-light); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ===== 上传区域 ===== */
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--primary);
+    background: rgba(99, 102, 241, 0.05);
+  }
+
+  .upload-zone input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .upload-icon { font-size: 48px; margin-bottom: 12px; }
+  .upload-text { color: var(--text2); font-size: 14px; }
+  .upload-hint { color: var(--text2); font-size: 12px; margin-top: 6px; opacity: 0.6; }
+
+  /* ===== 预览图 ===== */
+  #preview-img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 8px;
+    margin: 12px auto;
+    display: none;
+  }
+
+  /* ===== 识别结果 ===== */
+  .result-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .result-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--card2);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  .result-item.duplicate {
+    opacity: 0.5;
+    border-color: var(--red);
+  }
+
+  .result-item.duplicate::after {
+    content: "重复";
+    font-size: 11px;
+    color: var(--red);
+    background: rgba(239,68,68,0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+
+  .result-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--primary);
+    flex-shrink: 0;
+  }
+
+  .result-name {
+    flex: 1;
+    font-size: 14px;
+  }
+
+  .result-name input {
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-size: 14px;
+    width: 100%;
+    outline: none;
+  }
+
+  .result-name input:focus {
+    border-bottom: 1px solid var(--primary);
+  }
+
+  /* ===== 表格 ===== */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  th {
+    background: var(--card2);
+    padding: 12px 14px;
+    text-align: left;
+    color: var(--text2);
+    font-weight: 500;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* ===== 标签/状态 ===== */
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .tag-待看 { background: rgba(59,130,246,0.15); color: #60a5fa; }
+  .tag-已看 { background: rgba(34,197,94,0.15); color: #4ade80; }
+  .tag-待拆解 { background: rgba(245,158,11,0.15); color: #fbbf24; }
+  .tag-已拆解 { background: rgba(99,102,241,0.15); color: #a5b4fc; }
+  .tag-跳过 { background: rgba(107,114,128,0.15); color: #9ca3af; }
+
+  /* ===== 筛选栏 ===== */
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    align-items: center;
+  }
+
+  .filter-bar select, .filter-bar input {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    outline: none;
+  }
+
+  .filter-bar select:focus, .filter-bar input:focus {
+    border-color: var(--primary);
+  }
+
+  /* ===== 表单 ===== */
+  .form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+
+  .form-group label {
+    font-size: 12px;
+    color: var(--text2);
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    outline: none;
+    font-family: inherit;
+  }
+
+  .form-group textarea { resize: vertical; min-height: 80px; }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: var(--primary);
+  }
+
+  /* ===== API设置 ===== */
+  .api-tip {
+    font-size: 12px;
+    color: var(--text2);
+    margin-top: 6px;
+    line-height: 1.6;
+  }
+
+  .api-tip a { color: var(--primary-light); }
+
+  /* ===== 统计卡片 ===== */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--primary-light);
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--text2);
+    margin-top: 4px;
+  }
+
+  /* ===== 加载动画 ===== */
+  .loading {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ===== Toast提示 ===== */
+  .toast-wrap {
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .toast {
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: white;
+    animation: slideIn 0.3s ease;
+    max-width: 300px;
+  }
+
+  .toast-success { background: var(--green); }
+  .toast-error { background: var(--red); }
+  .toast-info { background: var(--primary); }
+
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  /* ===== 弹窗 ===== */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-overlay.show { display: flex; }
+
+  .modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+
+  /* ===== 响应式 ===== */
+  @media (max-width: 600px) {
+    .nav { padding: 0 12px; gap: 4px; }
+    .nav-title { font-size: 15px; margin-right: 8px; }
+    .nav-tab { padding: 5px 10px; font-size: 12px; }
+    .page { padding: 12px; }
+    .card { padding: 14px; }
+    .form-row { grid-template-columns: 1fr; }
+    th, td { padding: 8px 10px; }
+  }
+
+  /* ===== 空状态 ===== */
+  .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text2);
+  }
+
+  .empty-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-text { font-size: 14px; }
+
+  /* ===== 今日待看 ===== */
+  .todo-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: var(--card2);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin-bottom: 8px;
+    transition: all 0.2s;
+  }
+
+  .todo-item:hover { border-color: var(--primary); }
+
+  .todo-num {
+    width: 28px;
+    height: 28px;
+    background: var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .todo-name { flex: 1; font-size: 15px; font-weight: 500; }
+  .todo-source { font-size: 11px; color: var(--text2); }
+
+  .todo-actions { display: flex; gap: 6px; }
+
+  .btn-sm {
+    padding: 5px 12px;
+    font-size: 12px;
+    border-radius: 6px;
+  }
+</style>
+</head>
+<body>
+
+<!-- 导航 -->
+<nav class="nav">
+  <span class="nav-title">🎬 编剧大脑</span>
+  <button class="nav-tab active" onclick="switchPage('page-today')">今日待看</button>
+  <button class="nav-tab" onclick="switchPage('page-import')">录入榜单</button>
+  <button class="nav-tab" onclick="switchPage('page-library')">剧库</button>
+  <button class="nav-tab" onclick="switchPage('page-material')">素材库</button>
+  <button class="nav-tab" onclick="switchPage('page-setting')">设置</button>
+</nav>
+
+<!-- Toast容器 -->
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<!-- ===================== 今日待看 ===================== -->
+<div class="page active" id="page-today">
+  <div class="stats-grid" id="stats-grid"></div>
+  <div class="card">
+    <div class="card-title">📋 今日待看（<span id="todo-count">0</span>部）</div>
+    <div id="todo-list"></div>
+  </div>
+</div>
+
+<!-- ===================== 录入榜单 ===================== -->
+<div class="page" id="page-import">
+  <div class="card">
+    <div class="card-title">📸 贴入榜单截图 · AI自动识别剧名</div>
+
+    <!-- 上传区域 -->
+    <div class="upload-zone" id="upload-zone">
+      <input type="file" accept="image/*" id="img-input" onchange="handleImageSelect(event)">
+      <div class="upload-icon">📷</div>
+      <div class="upload-text">点击上传 或 直接粘贴截图（Ctrl+V）</div>
+      <div class="upload-hint">支持 JPG / PNG / 截图直接粘贴</div>
+    </div>
+
+    <img id="preview-img" alt="预览">
+
+    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;">
+      <select id="source-select" style="background:var(--card2);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:8px;font-size:13px;outline:none;">
+        <option value="日榜">日榜</option>
+        <option value="飙升榜">飙升榜</option>
+        <option value="新剧榜">新剧榜</option>
+        <option value="完结榜">完结榜</option>
+        <option value="热搜榜">热搜榜</option>
+      </select>
+      <button class="btn btn-primary" id="recognize-btn" onclick="recognizeImage()" disabled>
+        ✨ AI识别剧名
+      </button>
+    </div>
+  </div>
+
+  <!-- 识别结果 -->
+  <div class="card" id="result-card" style="display:none;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div class="card-title" style="margin:0;">
+        识别结果（<span id="result-count">0</span>个）
+        <span style="font-size:12px;color:var(--text2);font-weight:400;margin-left:8px;">
+          可直接修改剧名
+        </span>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost btn-sm" onclick="selectAllResults(true)">全选</button>
+        <button class="btn btn-ghost btn-sm" onclick="selectAllResults(false)">取消全选</button>
+      </div>
+    </div>
+    <div class="result-list" id="result-list"></div>
+    <div style="margin-top:14px;display:flex;gap:10px;">
+      <button class="btn btn-success" onclick="importSelected()">✅ 导入选中的剧</button>
+      <span id="import-tip" style="font-size:12px;color:var(--text2);align-self:center;"></span>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 剧库 ===================== -->
+<div class="page" id="page-library">
+  <div class="filter-bar">
+    <input type="text" placeholder="🔍 搜索剧名..." id="search-input" oninput="renderLibrary()" style="flex:1;min-width:150px;">
+    <select id="filter-status" onchange="renderLibrary()">
+      <option value="">全部状态</option>
+      <option value="待看">待看</option>
+      <option value="已看">已看</option>
+      <option value="待拆解">待拆解</option>
+      <option value="已拆解">已拆解</option>
+      <option value="跳过">跳过</option>
+    </select>
+    <select id="filter-genre" onchange="renderLibrary()">
+      <option value="">全部题材</option>
+      <option value="甜宠">甜宠</option>
+      <option value="战神">战神</option>
+      <option value="重生">重生</option>
+      <option value="逆袭">逆袭</option>
+      <option value="虐恋">虐恋</option>
+      <option value="悬疑">悬疑</option>
+      <option value="古装">古装</option>
+      <option value="都市">都市</option>
+      <option value="其他">其他</option>
+    </select>
+    <button class="btn btn-ghost btn-sm" onclick="exportCSV()">📥 导出CSV</button>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>剧名</th>
+          <th>题材</th>
+          <th>来源</th>
+          <th>状态</th>
+          <th>评分</th>
+          <th>备注</th>
+          <th>录入日期</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="library-tbody"></tbody>
+    </table>
+  </div>
+  <div id="library-empty" class="empty" style="display:none;">
+    <div class="empty-icon">📭</div>
+    <div class="empty-text">剧库为空，去录入榜单吧</div>
+  </div>
+</div>
+
+<!-- ===================== 素材库 ===================== -->
+<div class="page" id="page-material">
+  <div class="card">
+    <div class="card-title">💡 快速录入素材</div>
+    <div class="form-row">
+      <div class="form-group" style="grid-column:1/-1;">
+        <label>素材内容 *</label>
+        <textarea id="mat-content" placeholder="写下你的灵感、人设、事件、对白..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>素材类型</label>
+        <select id="mat-type">
+          <option>灵感</option>
+          <option>人设</option>
+          <option>事件</option>
+          <option>对白</option>
+          <option>场景</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>适用题材</label>
+        <input id="mat-genre" placeholder="如：甜宠、战神（可留空）">
+      </div>
+      <div class="form-group">
+        <label>来源</label>
+        <input id="mat-source" placeholder="出自哪部剧，或自己想的">
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="addMaterial()">💾 保存素材</button>
+  </div>
+
+  <div class="filter-bar">
+    <input type="text" placeholder="🔍 搜索素材..." id="mat-search" oninput="renderMaterial()" style="flex:1;min-width:150px;">
+    <select id="mat-filter-type" onchange="renderMaterial()">
+      <option value="">全部类型</option>
+      <option>灵感</option>
+      <option>人设</option>
+      <option>事件</option>
+      <option>对白</option>
+      <option>场景</option>
+    </select>
+  </div>
+
+  <div id="mat-list"></div>
+  <div id="mat-empty" class="empty" style="display:none;">
+    <div class="empty-icon">💭</div>
+    <div class="empty-text">素材库为空，记录你的第一个灵感吧</div>
+  </div>
+</div>
+
+<!-- ===================== 设置 ===================== -->
+<div class="page" id="page-setting">
+  <div class="card">
+    <div class="card-title">🔑 通义千问 API Key</div>
+    <div class="form-group">
+      <label>API Key</label>
+      <input type="password" id="api-key-input" placeholder="sk-xxxxxxxxxxxxxxxx">
+    </div>
+    <p class="api-tip">
+      申请地址：<a href="https://dashscope.console.aliyun.com" target="_blank">dashscope.console.aliyun.com</a><br>
+      登录后点「API-KEY管理」→「创建新的API-KEY」→ 复制粘贴到这里<br>
+      ⚠️ Key保存在你的浏览器本地，不会上传到任何服务器
+    </p>
+    <button class="btn btn-primary" style="margin-top:14px;" onclick="saveApiKey()">保存</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🗄️ 数据管理</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-ghost" onclick="exportData()">📤 导出全部数据</button>
+      <button class="btn btn-ghost" onclick="importData()">📥 导入数据</button>
+      <button class="btn btn-danger" onclick="clearData()">🗑️ 清空所有数据</button>
+    </div>
+    <input type="file" id="import-file" accept=".json" style="display:none" onchange="handleImport(event)">
+  </div>
+</div>
+
+<!-- ===================== 编辑弹窗 ===================== -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <div class="modal-title">✏️ 编辑剧目</div>
+    <input type="hidden" id="edit-id">
+    <div class="form-row">
+      <div class="form-group" style="grid-column:1/-1;">
+        <label>剧名</label>
+        <input id="edit-name">
+      </div>
+      <div class="form-group">
+        <label>题材</label>
+        <select id="edit-genre">
+          <option value="">未分类</option>
+          <option>甜宠</option><option>战神</option><option>重生</option>
+          <option>逆袭</option><option>虐恋</option><option>悬疑</option>
+          <option>古装</option><option>都市</option><option>其他</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>状态</label>
+        <select id="edit-status">
+          <option>待看</option><option>已看</option>
+          <option>待拆解</option><option>已拆解</option><option>跳过</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>评分</label>
+        <select id="edit-rating">
+          <option value="">未评分</option>
+          <option>⭐</option><option>⭐⭐</option><option>⭐⭐⭐</option>
+          <option>⭐⭐⭐⭐</option><option>⭐⭐⭐⭐⭐</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>是否拆解</label>
+        <select id="edit-analyze">
+          <option value="否">否</option>
+          <option value="是">是</option>
+        </select>
+      </div>
+      <div class="form-group" style="grid-column:1/-1;">
+        <label>备注</label>
+        <textarea id="edit-note" placeholder="亮点、槽点、可复用的点..."></textarea>
+      </div>
+      <div class="form-group" style="grid-column:1/-1;">
+        <label>链接</label>
+        <input id="edit-link" placeholder="红果链接（可选）">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveEdit()">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//   数据层：所有数据存 localStorage
+// ============================================================
+
+var DB = {
+  // 读取剧库
+  getDramas: function() {
+    try { return JSON.parse(localStorage.getItem('dramas') || '[]'); }
+    catch(e) { return []; }
+  },
+  // 保存剧库
+  saveDramas: function(list) {
+    localStorage.setItem('dramas', JSON.stringify(list));
+  },
+  // 读取素材库
+  getMaterials: function() {
+    try { return JSON.parse(localStorage.getItem('materials') || '[]'); }
+    catch(e) { return []; }
+  },
+  // 保存素材库
+  saveMaterials: function(list) {
+    localStorage.setItem('materials', JSON.stringify(list));
+  },
+  // 读取API Key
+  getApiKey: function() {
+    return localStorage.getItem('qwen_api_key') || '';
+  },
+  // 保存API Key
+  saveApiKey: function(key) {
+    localStorage.setItem('qwen_api_key', key);
+  }
+};
+
+// ============================================================
+//   工具函数
+// ============================================================
+
+function uuid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2);
+}
+
+function today() {
+  var d = new Date();
+  return d.getFullYear() + '-' +
+    String(d.getMonth()+1).padStart(2,'0') + '-' +
+    String(d.getDate()).padStart(2,'0');
+}
+
+function toast(msg, type) {
+  type = type || 'info';
+  var wrap = document.getElementById('toast-wrap');
+  var el = document.createElement('div');
+  el.className = 'toast toast-' + type;
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(function() { el.remove(); }, 3000);
+}
+
+function switchPage(id) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+
+  // 切换时刷新对应页面
+  if (id === 'page-today') renderToday();
+  if (id === 'page-library') renderLibrary();
+  if (id === 'page-material') renderMaterial();
+}
+
+// ============================================================
+//   图片上传 & 识别
+// ============================================================
+
+var currentImageBase64 = null;
+
+// 拖拽
+var zone = document.getElementById('upload-zone');
+zone.addEventListener('dragover', function(e) {
+  e.preventDefault();
+  zone.classList.add('drag-over');
+});
+zone.addEventListener('dragleave', function() {
+  zone.classList.remove('drag-over');
+});
+zone.addEventListener('drop', function(e) {
+  e.preventDefault();
+  zone.classList.remove('drag-over');
+  var file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) loadImage(file);
+});
+
+// 粘贴截图（Ctrl+V）
+document.addEventListener('paste', function(e) {
+  var items = e.clipboardData && e.clipboardData.items;
+  if (!items) return;
+  for (var i = 0; i < items.length; i++) {
+    if (items[i].type.startsWith('image/')) {
+      var file = items[i].getAsFile();
+      loadImage(file);
+      // 自动切到录入页
+      switchToImport();
+      break;
+    }
+  }
+});
+
+function switchToImport() {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.getElementById('page-import').classList.add('active');
+  document.querySelectorAll('.nav-tab')[1].classList.add('active');
+}
+
+function handleImageSelect(e) {
+  var file = e.target.files[0];
+  if (file) loadImage(file);
+}
+
+function loadImage(file) {
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var base64 = e.target.result;
+    currentImageBase64 = base64.split(',')[1]; // 去掉 data:image/xxx;base64, 前缀
+
+    var img = document.getElementById('preview-img');
+    img.src = base64;
+    img.style.display = 'block';
+
+    document.getElementById('recognize-btn').disabled = false;
+    document.getElementById('result-card').style.display = 'none';
+    toast('图片已加载，点击「AI识别剧名」开始识别', 'info');
+  };
+  reader.readAsDataURL(file);
+}
+
+// AI识别
+async function recognizeImage() {
+  var apiKey = DB.getApiKey();
+  if (!apiKey) {
+    toast('请先在「设置」页面填写 API Key', 'error');
+    switchPage2('page-setting');
+    return;
+  }
+  if (!currentImageBase64) {
+    toast('请先上传图片', 'error');
+    return;
+  }
+
+  var btn = document.getElementById('recognize-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loading"></span> 识别中...';
+
+  try {
+    var response = await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + apiKey,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'qwen-vl-max',
+        messages: [{
+          role: 'user',
+          content: [
+            {
+              type: 'image_url',
+              image_url: { url: 'data:image/jpeg;base64,' + currentImageBase64 }
+            },
+            {
+              type: 'text',
+              text: '这是一张短剧/网剧榜单截图。请提取出所有短剧的名称，每行输出一个剧名，不要输出任何其他内容，不要序号，不要标点，只输出剧名本身。'
+            }
+          ]
+        }]
+      })
+    });
+
+    var data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error && data.error.message || '识别失败，请检查API Key');
+    }
+
+    var text = data.choices[0].message.content;
+    var names = text.split('\n')
+      .map(function(n) { return n.trim().replace(/^[\d\.\、\-\s]+/, '').trim(); })
+      .filter(function(n) { return n.length >= 2; });
+
+    showResults(names);
+
+  } catch(e) {
+    toast('识别失败：' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '✨ AI识别剧名';
+  }
+}
+
+// 展示识别结果
+function showResults(names) {
+  var dramas = DB.getDramas();
+  var existingNames = {};
+  dramas.forEach(function(d) { existingNames[d.name] = true; });
+
+  var list = document.getElementById('result-list');
+  list.innerHTML = '';
+  document.getElementById('result-count').textContent = names.length;
+  document.getElementById('result-card').style.display = 'block';
+
+  names.forEach(function(name, i) {
+    var isDup = !!existingNames[name];
+    var item = document.createElement('div');
+    item.className = 'result-item' + (isDup ? ' duplicate' : '');
+    item.innerHTML =
+      '<input type="checkbox" ' + (isDup ? '' : 'checked') + ' data-index="' + i + '">' +
+      '<div class="result-name"><input type="text" value="' + escHtml(name) + '" data-index="' + i + '"></div>';
+    list.appendChild(item);
+  });
+
+  var newCount = names.filter(function(n) { return !existingNames[n]; }).length;
+  document.getElementById('import-tip').textContent =
+    '共' + names.length + '个，其中' + newCount + '个为新剧，' + (names.length - newCount) + '个重复';
+
+  toast('识别完成！共 ' + names.length + ' 个剧名', 'success');
+}
+
+// 全选/取消
+function selectAllResults(checked) {
+  document.querySelectorAll('#result-list input[type="checkbox"]').forEach(function(cb) {
+    cb.checked = checked;
+  });
+}
+
+// 导入选中
+function importSelected() {
+  var source = document.getElementById('source-select').value;
+  var dramas = DB.getDramas();
+  var existingNames = {};
+  dramas.forEach(function(d) { existingNames[d.name] = true; });
+
+  var checkboxes = document.querySelectorAll('#result-list input[type="checkbox"]');
+  var added = 0;
+  var skipped = 0;
+
+  checkboxes.forEach(function(cb) {
+    if (!cb.checked) return;
+    var idx = cb.getAttribute('data-index');
+    var nameInput = document.querySelector('#result-list input[type="text"][data-index="' + idx + '"]');
+    var name = nameInput ? nameInput.value.trim() : '';
+    if (!name || name.length < 2) return;
+
+    if (existingNames[name]) {
+      skipped++;
+      return;
+    }
+
+    dramas.push({
+      id: uuid(),
+      name: name,
+      genre: '',
+      source: source,
+      status: '待看',
+      rating: '',
+      note: '',
+      analyze: '否',
+      link: '',
+      date: today()
+    });
+
+    existingNames[name] = true;
+    added++;
+  });
+
+  DB.saveDramas(dramas);
+  toast('✅ 导入 ' + added + ' 部新剧，跳过 ' + skipped + ' 部重复', 'success');
+  document.getElementById('result-card').style.display = 'none';
+  renderToday();
+}
+
+// ============================================================
+//   今日待看
+// ============================================================
+
+function renderToday() {
+  var dramas = DB.getDramas();
+
+  // 统计
+  var stats = { total: dramas.length, 待看: 0, 已看: 0, 待拆解: 0, 已拆解: 0 };
+  dramas.forEach(function(d) {
+    if (stats[d.status] !== undefined) stats[d.status]++;
+  });
+
+  document.getElementById('stats-grid').innerHTML =
+    '<div class="stat-card"><div class="stat-num">' + stats.total + '</div><div class="stat-label">剧库总计</div></div>' +
+    '<div class="stat-card"><div class="stat-num" style="color:#60a5fa">' + stats['待看'] + '</div><div class="stat-label">待看</div></div>' +
+    '<div class="stat-card"><div class="stat-num" style="color:#4ade80">' + stats['已看'] + '</div><div class="stat-label">已看</div></div>' +
+    '<div class="stat-card"><div class="stat-num" style="color:#fbbf24">' + stats['待拆解'] + '</div><div class="stat-label">待拆解</div></div>' +
+    '<div class="stat-card"><div class="stat-num" style="color:#a5b4fc">' + stats['已拆解'] + '</div><div class="stat-label">已拆解</div></div>';
+
+  // 待看列表
+  var pending = dramas.filter(function(d) { return d.status === '待看'; });
+  document.getElementById('todo-count').textContent = pending.length;
+
+  var list = document.getElementById('todo-list');
+  if (pending.length === 0) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">🎉</div><div class="empty-text">今日待看已清空！</div></div>';
+    return;
+  }
+
+  list.innerHTML = pending.map(function(d, i) {
+    return '<div class="todo-item">' +
+      '<div class="todo-num">' + (i+1) + '</div>' +
+      '<div style="flex:1">' +
+        '<div class="todo-name">' + escHtml(d.name) + '</div>' +
+        '<div class="todo-source">' + (d.source || '') + ' · ' + (d.date || '') + '</div>' +
+      '</div>' +
+      '<div class="todo-actions">' +
+        '<button class="btn btn-ghost btn-sm" onclick="quickMark(\'' + d.id + '\')">标注</button>' +
+        '<button class="btn btn-success btn-sm" onclick="markWatched(\'' + d.id + '\')">✓ 看完</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// 快速标注（打开编辑弹窗）
+function quickMark(id) {
+  openEdit(id);
+}
+
+// 一键标记已看
+function markWatched(id) {
+  var dramas = DB.getDramas();
+  dramas = dramas.map(function(d) {
+    if (d.id === id) d.status = '已看';
+    return d;
+  });
+  DB.saveDramas(dramas);
+  renderToday();
+  toast('已标记为已看', 'success');
+}
+
+// ============================================================
+//   剧库
+// ============================================================
+
+function renderLibrary() {
+  var dramas = DB.getDramas();
+  var search = document.getElementById('search-input').value.toLowerCase();
+  var filterStatus = document.getElementById('filter-status').value;
+  var filterGenre = document.getElementById('filter-genre').value;
+
+  var filtered = dramas.filter(function(d) {
+    if (search && d.name.toLowerCase().indexOf(search) === -1) return false;
+    if (filterStatus && d.status !== filterStatus) return false;
+    if (filterGenre && d.genre !== filterGenre) return false;
+    return true;
+  });
+
+  // 按录入日期倒序
+  filtered.sort(function(a, b) { return (b.date || '') > (a.date || '') ? 1 : -1; });
+
+  var tbody = document.getElementById('library-tbody');
+  var empty = document.getElementById('library-empty');
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+
+  empty.style.display = 'none';
+  tbody.innerHTML = filtered.map(function(d) {
+    return '<tr>' +
+      '<td style="font-weight:500;max-width:160px;word-break:break-all;">' + escHtml(d.name) + '</td>' +
+      '<td>' + (d.genre || '<span style="color:var(--text2)">-</span>') + '</td>' +
+      '<td>' + (d.source || '-') + '</td>' +
+      '<td><span class="tag tag-' + d.status + '">' + d.status + '</span></td>' +
+      '<td>' + (d.rating || '-') + '</td>' +
+      '<td style="max-width:200px;color:var(--text2);font-size:12px;">' + escHtml(d.note || '') + '</td>' +
+      '<td style="color:var(--text2);font-size:12px;">' + (d.date || '') + '</td>' +
+      '<td>' +
+        '<button class="btn btn-ghost btn-sm" onclick="openEdit(\'' + d.id + '\')">编辑</button> ' +
+        '<button class="btn btn-danger btn-sm" onclick="deleteDrama(\'' + d.id + '\')">删</button>' +
+      '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+function deleteDrama(id) {
+  if (!confirm('确认删除这条记录？')) return;
+  var dramas = DB.getDramas().filter(function(d) { return d.id !== id; });
+  DB.saveDramas(dramas);
+  renderLibrary();
+  toast('已删除', 'info');
+}
+
+// ============================================================
+//   编辑弹窗
+// ============================================================
+
+function openEdit(id) {
+  var dramas = DB.getDramas();
+  var d = dramas.find(function(x) { return x.id === id; });
+  if (!d) return;
+
+  document.getElementById('edit-id').value = id;
+  document.getElementById('edit-name').value = d.name || '';
+  document.getElementById('edit-genre').value = d.genre || '';
+  document.getElementById('edit-status').value = d.status || '待看';
+  document.getElementById('edit-rating').value = d.rating || '';
+  document.getElementById('edit-analyze').value = d.analyze || '否';
+  document.getElementById('edit-note').value = d.note || '';
+  document.getElementById('edit-link').value = d.link || '';
+
+  document.getElementById('edit-modal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('edit-modal').classList.remove('show');
+}
+
+function saveEdit() {
+  var id = document.getElementById('edit-id').value;
+  var dramas = DB.getDramas();
+  dramas = dramas.map(function(d) {
+    if (d.id === id) {
+      d.name = document.getElementById('edit-name').value.trim();
+      d.genre = document.getElementById('edit-genre').value;
+      d.status = document.getElementById('edit-status').value;
+      d.rating = document.getElementById('edit-rating').value;
+      d.analyze = document.getElementById('edit-analyze').value;
+      d.note = document.getElementById('edit-note').value.trim();
+      d.link = document.getElementById('edit-link').value.trim();
+    }
+    return d;
+  });
+  DB.saveDramas(dramas);
+  closeModal();
+  renderToday();
+  renderLibrary();
+  toast('保存成功', 'success');
+}
+
+// 点弹窗外部关闭
+document.getElementById('edit-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ============================================================
+//   素材库
+// ============================================================
+
+function addMaterial() {
+  var content = document.getElementById('mat-content').value.trim();
+  if (!content) { toast('请输入素材内容', 'error'); return; }
+
+  var mats = DB.getMaterials();
+  mats.unshift({
+    id: uuid(),
+    content: content,
+    type: document.getElementById('mat-type').value,
+    genre: document.getElementById('mat-genre').value.trim(),
+    source: document.getElementById('mat-source').value.trim(),
+    time: today(),
+    used: false
+  });
+  DB.saveMaterials(mats);
+
+  document.getElementById('mat-content').value = '';
+  document.getElementById('mat-genre').value = '';
+  document.getElementById('mat-source').value = '';
+
+  renderMaterial();
+  toast('素材已保存', 'success');
+}
+
+function renderMaterial() {
+  var mats = DB.getMaterials();
+  var search = document.getElementById('mat-search').value.toLowerCase();
+  var filterType = document.getElementById('mat-filter-type').value;
+
+  var filtered = mats.filter(function(m) {
+    if (search && m.content.toLowerCase().indexOf(search) === -1) return false;
+    if (filterType && m.type !== filterType) return false;
+    return true;
+  });
+
+  var list = document.getElementById('mat-list');
+  var empty = document.getElementById('mat-empty');
+
+  if (filtered.length === 0) {
+    list.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+
+  empty.style.display = 'none';
+  list.innerHTML = filtered.map(function(m) {
+    return '<div class="card" style="' + (m.used ? 'opacity:0.5;' : '') + '">' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">' +
+        '<div style="flex:1;">' +
+          '<div style="font-size:14px;line-height:1.6;margin-bottom:8px;">' + escHtml(m.content) + '</div>' +
+          '<div style="font-size:12px;color:var(--text2);">' +
+            '<span class="tag" style="background:rgba(99,102,241,0.15);color:#a5b4fc;margin-right:6px;">' + m.type + '</span>' +
+            (m.genre ? '<span style="margin-right:8px;">' + escHtml(m.genre) + '</span>' : '') +
+            (m.source ? '<span>来自：' + escHtml(m.source) + '</span>' : '') +
+            '<span style="float:right;">' + (m.time || '') + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex;gap:6px;flex-shrink:0;">' +
+          '<button class="btn btn-ghost btn-sm" onclick="toggleUsed(\'' + m.id + '\')">' + (m.used ? '标为未用' : '标为已用') + '</button>' +
+          '<button class="btn btn-danger btn-sm" onclick="deleteMat(\'' + m.id + '\')">删</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function toggleUsed(id) {
+  var mats = DB.getMaterials().map(function(m) {
+    if (m.id === id) m.used = !m.used;
+    return m;
+  });
+  DB.saveMaterials(mats);
+  renderMaterial();
+}
+
+function deleteMat(id) {
+  if (!confirm('确认删除这条素材？')) return;
+  DB.saveMaterials(DB.getMaterials().filter(function(m) { return m.id !== id; }));
+  renderMaterial();
+  toast('已删除', 'info');
+}
+
+// ============================================================
+//   设置
+// ============================================================
+
+function saveApiKey() {
+  var key = document.getElementById('api-key-input').value.trim();
+  if (!key) { toast('请输入API Key', 'error'); return; }
+  DB.saveApiKey(key);
+  toast('API Key 已保存', 'success');
+}
+
+function exportData() {
+  var data = {
+    dramas: DB.getDramas(),
+    materials: DB.getMaterials(),
+    exportTime: new Date().toISOString()
+  };
+  var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = '编剧大脑_' + today() + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('数据已导出', 'success');
+}
+
+function importData() {
+  document.getElementById('import-file').click();
+}
+
+function handleImport(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      var data = JSON.parse(ev.target.result);
+      if (data.dramas) DB.saveDramas(data.dramas);
+      if (data.materials) DB.saveMaterials(data.materials);
+      toast('数据导入成功', 'success');
+      renderToday();
+    } catch(err) {
+      toast('导入失败：文件格式错误', 'error');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function clearData() {
+  if (!confirm('⚠️ 确认清空所有数据？此操作不可撤销！')) return;
+  localStorage.removeItem('dramas');
+  localStorage.removeItem('materials');
+  renderToday();
+  renderLibrary();
+  renderMaterial();
+  toast('数据已清空', 'info');
+}
+
+function exportCSV() {
+  var dramas = DB.getDramas();
+  var rows = [['剧名','题材','来源','状态','评分','备注','是否拆解','链接','录入日期']];
+  dramas.forEach(function(d) {
+    rows.push([d.name,d.genre,d.source,d.status,d.rating,d.note,d.analyze,d.link,d.date]);行.推入([d.名称,d.类型,d.来源,d.状态,d.评分,d.备注,d.分析,d.链接,d.日期]);
+  });
+  var csv = rows.map(function(r) {
+    return r.map(function(c) { return '"' + (c||'').replace(/"/g,'""') + '"'; }).join(',');返回r.map(函数c){'"'+||''替换/"/g,'""';}连接','
+  }).join('\n');
+  var blob = new Blob(['\ufeff'+csv], { type: 'text/csv;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = '榜单剧库_' + today() + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ============================================================
+//   工具
+// ============================================================
+
+function escHtml(str) {
+  if (!str) return '';
+  return str.toString()返回 字符串.toString()
+    .replace(/&/g,'&amp;')    .替换(/&/g,'&amp;')
+    .replace(/</g,'&lt;')    .替换(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+function switchPage2(id) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });document.querySelectorAll('.page')forEachfunctionp{classListremove'active';}
+  document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });document.querySelectorAll('.nav-tab')forEachfunctiont{classListremove'active';}
+  document.getElementById(id).classList.add('active');
+  var map = {变量 映射 = {
+    'page-today': 0, 'page-import': 1, 'page-library': 2,
+    'page-material': 3, 'page-setting': 4
+  };
+  var tabs = document.querySelectorAll('.nav-tab');
+  if (map[id] !== undefined) tabs[map[id]].classList.add('active');如果 (map[id] !== undefined) tabs[map[id]].classList.添加('active');
+}
+
+// ============================================================
+//   初始化
+// ============================================================
+
+// 加载已保存的API Key
+window.onload = function() {
+  var key = DB.getApiKey();
+  if (key) document.getElementById('api-key-input').value = key;
+  renderToday();
+};
+</script>
+</body>
+</html>
